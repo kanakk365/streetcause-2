@@ -6,6 +6,7 @@ import { ParticipantsSection } from "./Components/Participants";
 import { PassSection } from "./Components/Pass";
 import { FooterSection } from "./Components/Fotter";
 import { HighlightsSection } from "./Components/HighlightSection";
+import { WhySection } from "./Components/WhySection";
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
       <PassSection/>
       <ImpactSection />
       <ParticipantsSection />
+      <WhySection/>
       <FooterSection />
     </main>
   );
