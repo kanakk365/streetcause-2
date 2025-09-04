@@ -86,13 +86,13 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center">
       <div className="absolute  inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-[70vw]  rounded-2xl p-8 sm:p-10" style={{ background: "linear-gradient(180deg, #aa0a63 0%, #760233 100%)" }}>
-        <header className="flex flex-col items-center gap-2 mb-10">
-          <h2 className="text-white text-3xl font-semibold">Get Your Pass</h2>
-          <p className="text-white/90 text-base">Fill in the details to secure your entry.</p>
+      <div className="relative w-[95vw] max-w-[700px] rounded-2xl p-4 sm:p-8 md:p-10 mx-4" style={{ background: "linear-gradient(180deg, #aa0a63 0%, #760233 100%)" }}>
+        <header className="flex flex-col items-center gap-2 mb-6 sm:mb-10">
+          <h2 className="text-white text-2xl sm:text-3xl font-semibold text-center">Get Your Pass</h2>
+          <p className="text-white/90 text-sm sm:text-base text-center">Fill in the details to secure your entry.</p>
         </header>
 
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-10">
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 md:gap-10">
           <input
             className="rounded-xl bg-white/95 px-4 py-3 outline-none placeholder:text-gray-500"
             placeholder="Name"
@@ -173,7 +173,7 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
           <div className="sm:col-span-2 flex justify-center mt-2">
             <button
               type="submit"
-              className="min-w-[11.25rem] rounded-xl px-6 py-3 text-white font-medium bg-white/20 hover:bg-white/25 border border-white/30 transition"
+              className="w-full sm:min-w-[11.25rem] rounded-xl px-6 py-3 text-white font-medium bg-white/20 hover:bg-white/25 border border-white/30 transition"
             >
               Submit
             </button>
