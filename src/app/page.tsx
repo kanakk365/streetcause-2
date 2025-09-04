@@ -16,7 +16,6 @@ export default function Home() {
       <PassSection/>
       <ImpactSection />
       <ParticipantsSection />
-      <PassSection />
       <FooterSection />
     </main>
   );

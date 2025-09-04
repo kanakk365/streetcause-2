@@ -5,32 +5,32 @@ import { ImpactCard } from '../ui/ImpactCard';
 export const ImpactSection: React.FC = () => {
   const impacts = [
     {
-      image: "/students-educated.jpg",
+      image: "/images/impact1.png",
       title: "500+ students educated",
       alt: "Students in classroom"
     },
     {
-      image: "/meals-served.jpg",
+      image: "/images/impact2.png",
       title: "2000+ meals served",
       alt: "Community meal service"
     },
     {
-      image: "/patients-treated.jpg",
+      image: "/images/impact3.png",
       title: "1312+ Patients treated",
       alt: "Medical care being provided"
     }
   ];
 
   return (
-    <section className="w-full h-[741px] shadow-[0_4px_16px_0_rgba(255,255,255,0.25)] relative px-0 py-20 max-sm:h-auto max-sm:px-0 max-sm:py-[60px]">
+    <section className="w-full h-[741px] shadow-[0_4px_16px_0_rgba(255,255,255,0.25)] relative px-0 py-20 max-sm:h-auto max-sm:px-0 max-sm:py-[60px] bg-gradient-to-b from-[#a00357] to-[#6b022e]">
       <Image
-        src="/community-impact-bg.jpg"
-        alt="Community impact background"
+        src="/images/impactbg.svg"
+        alt="Impact background"
         fill
         className="opacity-50 object-cover"
       />
       
-      <div className="relative z-[1] max-w-[1158px] mx-auto my-0 px-[141px] py-0 max-sm:px-5 max-sm:py-0">
+      <div className="relative z-[1] mx-auto my-0 px-[141px] py-0 max-sm:px-5 max-sm:py-0">
         <header className="flex flex-col justify-center items-center gap-[30px] w-[643px] mt-0 mb-20 mx-auto max-sm:w-[95%] max-sm:mb-10">
           <h2 className="text-white text-[40px] font-bold leading-10 tracking-[0.5px] text-center max-sm:text-[32px] max-sm:leading-9">
             Your Impact with Street Cause
