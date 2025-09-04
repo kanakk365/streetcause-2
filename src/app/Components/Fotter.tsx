@@ -51,11 +51,11 @@ export const FooterSection: React.FC = () => {
   ];
 
   return (
-    <footer className="w-full shadow-[0_4px_16px_0_rgba(255,255,255,0.25)] pt-20 pb-12 px-0 max-sm:pt-[60px] max-sm:pb-10 max-sm:px-0 bg-black">
+    <footer className="w-full shadow-[0_4px_16px_0_rgba(255,255,255,0.25)] pt-20 pb-12 px-0 max-sm:pt-[60px]  max-sm:px-0 bg-gradient-to-b from-[#a00357] to-[#6b022e]">
       <div className="flex gap-[50px] max-w-[1378px] mx-auto my-0 px-[62px] py-0 max-md:flex-col max-md:gap-10 max-md:px-10 max-md:py-0 max-sm:gap-[30px] max-sm:px-5 max-sm:py-0">
         <div className="flex flex-col items-start gap-6 w-[429px] max-md:w-full">
           <Image
-            src="/street-cause-logo.png"
+            src="/images/logo.png"
             alt="Street Cause Logo"
             width={230}
             height={69}
@@ -118,10 +118,8 @@ export const FooterSection: React.FC = () => {
           </ul>
         </nav>
         
-        <div className="flex flex-col items-start gap-[26px] w-[363px] max-md:w-full">
-          <h3 className="text-white text-2xl font-normal max-sm:text-xl">
-            Get in touch
-          </h3>
+        <div className="flex flex-col items-start gap-[26px] w-[363px] max-md:w-full mt-16">
+          
           <address className="text-white text-sm font-normal leading-[25px] not-italic">
             Ft.No.205(Moghal Emami-Complex),St.No.7, Veer Nagar, Chintal basthi road,khairtabad, Hyderabad, TS.
           </address>
@@ -146,7 +144,7 @@ export const FooterSection: React.FC = () => {
           </div>
           
           <Image
-            src="/office-location-map.jpg"
+            src="/images/footermap.png"
             alt="Office location map"
             width={360}
             height={170}
