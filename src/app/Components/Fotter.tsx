@@ -152,12 +152,6 @@ export const FooterSection: React.FC = () => {
           />
         </div>
       </div>
-      
-      <div className="w-full h-12 flex justify-center items-center bg-[rgba(0,0,0,0.16)] mt-12 max-sm:h-10 max-sm:mt-[30px]">
-        <p className="text-white text-sm font-normal leading-[25px] max-sm:text-xs max-sm:text-center max-sm:px-5 max-sm:py-0">
-          © 2025 Street Cause. All Rights Reserved.
-        </p>
-      </div>
     </footer>
   );
 };

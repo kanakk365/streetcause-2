@@ -4,9 +4,9 @@ import { AboutSection } from "./Components/About";
 import { ImpactSection } from "./Components/Impact";
 import { ParticipantsSection } from "./Components/Participants";
 import { PassSection } from "./Components/Pass";
-import { FooterSection } from "./Components/Fotter";
+import { WhyFooterSection } from "./Components/WhyFooterSection";
 import { HighlightsSection } from "./Components/HighlightSection";
-import { WhySection } from "./Components/WhySection";
+import { CopyrightStrip } from "./Components/CopyrightStrip";
 
 export default function Home() {
   return (
@@ -17,8 +17,8 @@ export default function Home() {
       <PassSection/>
       <ImpactSection />
       <ParticipantsSection />
-      <WhySection/>
-      <FooterSection />
+      <WhyFooterSection />
+      <CopyrightStrip />
     </main>
   );
 }
