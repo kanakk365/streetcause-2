@@ -7,8 +7,13 @@ import { DonationModal } from "./DonationModal";
 export const HeroSection: React.FC = () => {
   const [isDonateOpen, setIsDonateOpen] = useState(false);
   const handleSellPass = () => {
-    // Handle sell pass action
-    console.log('Sell pass clicked');
+    const element = document.getElementById('buy-pass');
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
   };
 
   const handleDonate = () => {

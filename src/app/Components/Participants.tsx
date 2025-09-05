@@ -23,7 +23,7 @@ export const ParticipantsSection: React.FC = () => {
 
   return (
     <section className="px-0 py-20 max-sm:px-4 max-sm:py-16">
-      <header className="flex flex-col justify-center items-start gap-7 w-full max-w-[67.125rem] mt-0 mb-20 mx-auto px-5 py-0 max-sm:w-[95%] max-sm:mb-10 max-sm:px-5 max-sm:py-0">
+      <header className="flex flex-col justify-center items-center gap-7 w-full max-w-[67.125rem] mt-0 mb-20 mx-auto px-5 py-0 max-sm:w-[95%] max-sm:mb-10 max-sm:px-5 max-sm:py-0">
         <h2 className="text-black text-4xl font-bold leading-10 tracking-[0.03125rem] text-center max-sm:text-3xl max-sm:leading-9">
           Our Proud Participants
         </h2>

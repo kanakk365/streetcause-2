@@ -46,7 +46,7 @@ export const PassSection: React.FC = () => {
   ];
 
   return (
-    <section className="px-0 py-20 max-sm:px-0 max-sm:py-[3.75rem] bg-[#f8ece4]">
+    <section id="buy-pass" className="px-0 py-20 max-sm:px-0 max-sm:py-[3.75rem] bg-[#f8ece4]">
       <header className="flex flex-col items-center gap-7 w-[40.375rem] mt-0 mb-20 mx-auto max-sm:w-[95%] max-sm:mb-10">
         <h2 className="text-black text-4xl font-bold leading-10 tracking-[0.03125rem] text-center max-sm:text-3xl max-sm:leading-9">
           Choose Your Pass

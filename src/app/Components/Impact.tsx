@@ -40,7 +40,7 @@ export const ImpactSection: React.FC = () => {
           </p>
         </header>
         
-        <div className="flex gap-6 w-full max-md:flex-col max-md:gap-8 max-sm:gap-6">
+        <div className="flex justify-center gap-6 w-full max-md:flex-col max-md:gap-8 max-sm:gap-6">
           {impacts.map((impact, index) => (
             <ImpactCard
               key={index}
