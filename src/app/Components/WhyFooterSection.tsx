@@ -53,7 +53,7 @@ export const WhyFooterSection: React.FC = () => {
           <div className="flex flex-col items-start gap-6 w-[26.8125rem] max-md:w-full">
             <div className="flex items-center gap-4 max-sm:gap-2">
               <Image
-                src="/images/logo.png"
+                src="/images/logol.png"
                 alt="Street Cause Logo"
                 width={240}
                 height={72}
