@@ -4,17 +4,28 @@ import React, { useState } from 'react';
 import BuyPassModal from './BuyPassModal';
 import TicketModal from './TicketModal';
 
+type TicketData = {
+  passPurchaseName: string;
+  passType: string;
+  passId: string;
+  mobileNumber: string;
+  email: string;
+  memberType: string;
+  paymentMode: string;
+  qrCode: string;
+};
+
 export const PassSection: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPassType, setSelectedPassType] = useState<string | undefined>(undefined);
-  const [ticketData, setTicketData] = useState<any | null>(null);
+  const [ticketData, setTicketData] = useState<TicketData | null>(null);
   const [showTicket, setShowTicket] = useState(false);
 
   const handleBuyPass = (passType: string) => {
     setSelectedPassType(passType);
     setIsModalOpen(true);
   };
-  const handleSuccess = (ticket: any) => {
+  const handleSuccess = (ticket: TicketData) => {
     setTicketData(ticket);
     setShowTicket(true);
   };
@@ -67,12 +78,7 @@ export const PassSection: React.FC = () => {
       <TicketModal
         isOpen={showTicket}
         onClose={() => setShowTicket(false)}
-        data={ticketData ? {
-          passPurchaseName: ticketData.passPurchaseName,
-          passType: ticketData.passType,
-          passId: ticketData.passId,
-          qrCode: ticketData.qrCode,
-        } : null}
+        data={ticketData}
       />
     </section>
   );
