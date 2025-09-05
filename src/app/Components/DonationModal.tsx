@@ -202,7 +202,7 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
         paymentMode
       };
 
-      const response = await fetch('https://scpapi.elitceler.com/api/v1/d1/donations', {
+      const response = await fetch('https://scpapi.elitceler.com/api/v1/d2/donations', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -305,7 +305,7 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center">
       <div className="absolute  inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-[95vw] max-w-[700px] rounded-2xl p-4 sm:p-8 md:p-10 mx-4 bg-[#800020]">
+      <div className="relative w-[95vw] max-w-[700px] rounded-2xl p-4 sm:p-8 md:p-10 mx-4 bg-[#082ca7]">
         <header className="flex flex-col items-center gap-2 mb-6 sm:mb-10">
           <h2 className="text-white text-2xl sm:text-3xl font-semibold text-center">Make a Donation</h2>
           <p className="text-white/90 text-sm sm:text-base text-center">Every rupee counts towards transforming lives.</p>
@@ -426,7 +426,7 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full sm:min-w-[11.25rem] rounded-xl px-6 py-3 text-white font-medium bg-[#FF7A00] hover:bg-[#e66a00] transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full sm:min-w-[11.25rem] rounded-xl px-6 py-3 text-white font-medium bg-[#ffbd00] hover:bg-[#e6a800] transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? "Processing..." : "Submit"}
             </button>

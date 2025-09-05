@@ -5,34 +5,34 @@
 
 :root {
   /* Custom Brand Colors */
-  --brand-orange: 30 100% 50%; /* #FF7A00 */
-  --brand-red: 348 90% 44%; /* #e5081f */
-  --brand-burgundy: 330 100% 25%; /* #800020 */
+  --brand-blue: 225 88% 36%; /* #082ca7 - Background */
+  --brand-green: 114 77% 22%; /* #136207 */
+  --brand-yellow: 44 100% 50%; /* #ffbd00 */
 
   --card: 0 0% 100%;
-  --card-foreground: var(--brand-burgundy);
+  --card-foreground: var(--brand-blue);
 
   --popover: 0 0% 100%;
-  --popover-foreground: var(--brand-burgundy);
+  --popover-foreground: var(--brand-blue);
 
-  --primary: var(--brand-burgundy);
+  --primary: var(--brand-blue);
   --primary-foreground: 0 0% 100%;
 
-  --secondary: var(--brand-orange);
+  --secondary: var(--brand-green);
   --secondary-foreground: 0 0% 100%;
 
   --muted: 0 0% 96%;
-  --muted-foreground: var(--brand-burgundy);
+  --muted-foreground: var(--brand-blue);
 
-  --accent: var(--brand-orange);
+  --accent: var(--brand-yellow);
   --accent-foreground: 0 0% 100%;
 
-  --destructive: var(--brand-red);
+  --destructive: var(--brand-green);
   --destructive-foreground: 0 0% 100%;
 
   --border: 0 0% 90%;
   --input: 0 0% 96%;
-  --ring: var(--brand-orange);
+  --ring: var(--brand-yellow);
 
   --radius: 0.625rem;
 
@@ -44,7 +44,7 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  --background: oklch(1 0 0);
+  --background: var(--brand-blue);
   --foreground: oklch(0.145 0 0);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);

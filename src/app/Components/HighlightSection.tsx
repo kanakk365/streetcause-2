@@ -22,7 +22,7 @@ export const HighlightsSection: React.FC = () => {
   ];
 
   return (
-    <section className="w-full h-[40rem] shadow-[0_1rem_4rem_0_rgba(255,255,255,0.25)] px-0 py-20 max-sm:h-auto max-sm:px-4 max-sm:py-16 bg-[#800020]">
+    <section className="w-full h-[40rem] shadow-[0_1rem_4rem_0_rgba(255,255,255,0.25)] px-0 py-20 max-sm:h-auto max-sm:px-4 max-sm:py-16 bg-[#082ca7]">
       <header className="flex flex-col items-center gap-7 w-full max-w-[48.4375rem] px-4 mt-0 mb-20 mx-auto">
         <h2 className="text-white text-4xl font-bold leading-10 tracking-[0.03125rem] text-center max-sm:text-3xl max-sm:leading-9">
           Event Highlights

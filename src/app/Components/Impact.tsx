@@ -22,7 +22,7 @@ export const ImpactSection: React.FC = () => {
   ];
 
   return (
-    <section className="w-full  relative px-0 py-20 max-sm:h-auto max-sm:px-4 max-sm:py-16 bg-[#800020]">
+    <section className="w-full  relative px-0 py-20 max-sm:h-auto max-sm:px-4 max-sm:py-16 bg-[#082ca7]">
       <Image
         src="/images/impactbg.svg"
         alt="Impact background"

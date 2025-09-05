@@ -2,7 +2,7 @@ import React from 'react';
 
 export const WhySection: React.FC = () => {
   return (
-    <section className="w-full h-[29.75rem] px-0 py-20 max-sm:h-auto max-sm:px-0 max-sm:py-[3.75rem] bg-[#800020]">
+    <section className="w-full h-[29.75rem] px-0 py-20 max-sm:h-auto max-sm:px-0 max-sm:py-[3.75rem] bg-[#082ca7]">
       <div className="flex flex-col items-center gap-14 w-[76.75rem] mx-auto my-0 px-[6.625rem] py-0 max-sm:w-[95%] max-sm:gap-7 max-sm:px-5 max-sm:py-0">
         <h2 className="text-white text-4xl font-bold leading-10 tracking-[0.03125rem] text-center max-sm:text-3xl max-sm:leading-9">
           Why This Event Matters

@@ -34,7 +34,7 @@ export const WhyFooterSection: React.FC = () => {
   ];
 
   return (
-    <section className="w-full bg-[#800020]">
+    <section className="w-full bg-[#082ca7]">
       {/* Why Section Content */}
       <div className="w-full px-0 py-20 max-sm:h-auto max-sm:px-0 max-sm:py-[3.75rem]">
         <div className="flex flex-col items-center gap-14 w-[76.75rem] mx-auto my-0 px-[6.625rem] py-0 max-sm:w-[95%] max-sm:gap-7 max-sm:px-5 max-sm:py-0">
@@ -82,7 +82,7 @@ export const WhyFooterSection: React.FC = () => {
                     href={social.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:opacity-80 transition-opacity w-13 h-13 rounded-full bg-[#b97c98] bg-opacity-20 flex items-center justify-center p-2"
+                    className="hover:opacity-80 transition-opacity w-13 h-13 rounded-full bg-[#ffbd00] bg-opacity-20 flex items-center justify-center p-2"
                     aria-label={social.name}
                   >
                     <Image

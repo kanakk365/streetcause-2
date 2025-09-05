@@ -152,7 +152,7 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
       };
 
       // Step 1: Create ticket on backend
-      const res = await fetch("https://scpapi.elitceler.com/api/v1/d1/tickets", {
+      const res = await fetch("https://scpapi.elitceler.com/api/v1/d2/tickets", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -231,7 +231,7 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center">
       <div className="absolute  inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-[95vw] max-w-[700px] rounded-2xl p-4 sm:p-8 md:p-10 mx-4 bg-[#800020]">
+      <div className="relative w-[95vw] max-w-[700px] rounded-2xl p-4 sm:p-8 md:p-10 mx-4 bg-[#082ca7]">
         <header className="flex flex-col items-center gap-2 mb-6 sm:mb-10">
           <h2 className="text-white text-2xl sm:text-3xl font-semibold text-center">Get Your Pass</h2>
           <p className="text-white/90 text-sm sm:text-base text-center">Fill in the details to secure your entry.</p>
@@ -334,7 +334,7 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
           <div className="sm:col-span-2 flex justify-center mt-2">
             <button
               type="submit"
-              className="w-full sm:min-w-[11.25rem] rounded-xl px-6 py-3 text-white font-medium bg-[#FF7A00] hover:bg-[#e66a00] transition"
+              className="w-full sm:min-w-[11.25rem] rounded-xl px-6 py-3 text-white font-medium bg-[#ffbd00] hover:bg-[#e6a800] transition"
             >
               {submitting ? "Submitting..." : "Submit"}
             </button>
