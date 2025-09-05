@@ -109,6 +109,13 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
 
   const passCount = useMemo(() => Number(passPurchase || 0), [passPurchase]);
 
+  // Calculate total amount based on pass type and quantity
+  const totalAmount = useMemo(() => {
+    if (passCount <= 0) return 0;
+    const baseAmount = /vip/i.test(passType) ? 1000 : 500;
+    return baseAmount * passCount;
+  }, [passType, passCount]);
+
   const isValid = useMemo(() => {
     const mobileOk = /^\d{10}$/.test(mobile.trim());
     const emailOk = /.+@.+\..+/.test(email.trim());
@@ -259,10 +266,11 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
           />
           <input
             className="rounded-xl bg-white/95 px-4 py-3 outline-none placeholder:text-gray-500"
-            placeholder="Pass Purchase"
-            inputMode="numeric"
+            placeholder="Number of Passes"
+            type="number"
+            min="1"
             value={passPurchase}
-            onChange={(e) => setPassPurchase(e.target.value.replace(/[^0-9]/g, ""))}
+            onChange={(e) => setPassPurchase(e.target.value)}
           />
           <select
             className="rounded-xl bg-white/95 px-4 py-3 outline-none text-gray-700"
@@ -281,7 +289,7 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
             <option>Member Type</option>
             <option>L1</option>
             <option>L2</option>
-            <option>L3</option>
+            <option>L4</option>
           </select>
           <select
             className="rounded-xl bg-white/95 px-4 py-3 outline-none text-gray-700"
@@ -302,9 +310,24 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
                 <li>Mobile must be 10 digits.</li>
                 <li>Provide a valid email.</li>
                 <li>Provide a valid Member ID.</li>
-                <li>Enter at least 1 in Pass Purchase.</li>
+                <li>Enter at least 1 in Number of Passes.</li>
                 <li>Select pass type, member type and payment mode.</li>
               </ul>
+            </div>
+          )}
+
+          {/* Display Amount to Pay */}
+          {totalAmount > 0 && (
+            <div className="sm:col-span-2 flex justify-center mt-4 p-4 bg-white/10 rounded-xl border border-white/20">
+              <div className="text-center">
+                <p className="text-white text-lg font-medium mb-1">Amount to Pay</p>
+                <p className="text-white text-2xl font-bold">₹{totalAmount}</p>
+                {passCount > 1 && (
+                  <p className="text-white/80 text-sm mt-1">
+                    {passCount} passes × ₹{/vip/i.test(passType) ? 1000 : 500}
+                  </p>
+                )}
+              </div>
             </div>
           )}
 

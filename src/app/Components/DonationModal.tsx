@@ -72,6 +72,7 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
   const [email, setEmail] = useState("");
   const [amount, setAmount] = useState<string>("");
   const [memberId, setMemberId] = useState("");
+  const [memberType, setMemberType] = useState("Member Type");
   const [paymentMode, setPaymentMode] = useState("Payment Mode");
   const [touched, setTouched] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -84,6 +85,7 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
     mobile: "",
     email: "",
     memberId: "",
+    memberType: "",
     amount: "",
     idType: "",
     paymentMode: ""
@@ -134,6 +136,8 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
         return Number(value || 0) < minAmount ? "Please enter a valid donation amount" : "";
       case 'idType':
         return value === "ID" ? "Please select an ID type" : "";
+      case 'memberType':
+        return value === "Member Type" ? "Please select a member type" : "";
       case 'paymentMode':
         return value === "Payment Mode" ? "Please select a payment mode" : "";
       default:
@@ -149,20 +153,22 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
         mobile: validateField('mobile', mobile),
         email: validateField('email', email),
         memberId: validateField('memberId', memberId),
+        memberType: validateField('memberType', memberType),
         amount: validateField('amount', amount),
         idType: "",
         paymentMode: validateField('paymentMode', paymentMode)
       });
     }
-  }, [name, mobile, email, memberId, amount, paymentMode, touched]);
+  }, [name, mobile, email, memberId, memberType, amount, paymentMode, touched]);
 
   const isValid = useMemo(() => {
     const mobileOk = /^\d{10}$/.test(mobile.trim());
     const emailOk = /.+@.+\..+/.test(email.trim());
     const amountOk = amountNumber >= minAmount;
     const memberIdOk = memberId.trim().length > 0;
-    return name.trim().length > 1 && mobileOk && emailOk && amountOk && memberIdOk && paymentMode !== "Payment Mode";
-  }, [name, mobile, email, amountNumber, memberId, paymentMode]);
+    const memberTypeOk = memberType !== "Member Type";
+    return name.trim().length > 1 && mobileOk && emailOk && amountOk && memberIdOk && memberTypeOk && paymentMode !== "Payment Mode";
+  }, [name, mobile, email, amountNumber, memberId, memberType, paymentMode]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -174,6 +180,7 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
       mobile: validateField('mobile', mobile),
       email: validateField('email', email),
       memberId: validateField('memberId', memberId),
+      memberType: validateField('memberType', memberType),
       amount: validateField('amount', amount),
       idType: "",
       paymentMode: validateField('paymentMode', paymentMode)
@@ -352,6 +359,21 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
             {errors.memberId && <span className="text-red-400 text-sm mt-1">{errors.memberId}</span>}
           </div>
           <div className="flex flex-col">
+            <select
+              className={`rounded-xl bg-white/95 px-4 py-3 outline-none text-gray-700 ${
+                errors.memberType ? 'border-2 border-red-500' : ''
+              }`}
+              value={memberType}
+              onChange={(e) => setMemberType(e.target.value)}
+            >
+              <option>Member Type</option>
+              <option>L1</option>
+              <option>L2</option>
+              <option>L4</option>
+            </select>
+            {errors.memberType && <span className="text-red-400 text-sm mt-1">{errors.memberType}</span>}
+          </div>
+          <div className="flex flex-col">
             <input
               className={`rounded-xl bg-white/95 px-4 py-3 outline-none placeholder:text-gray-500 ${
                 errors.amount ? 'border-2 border-red-500' : ''
@@ -390,6 +412,15 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
             {errors.paymentMode && <span className="text-red-400 text-sm mt-1">{errors.paymentMode}</span>}
           </div>
 
+          {/* Display Amount to Pay */}
+          {amountNumber > 0 && (
+            <div className="sm:col-span-2 flex justify-center mt-4 p-4 bg-white/10 rounded-xl border border-white/20">
+              <div className="text-center">
+                <p className="text-white text-lg font-medium mb-1">Amount to Pay</p>
+                <p className="text-white text-2xl font-bold">₹{amountNumber}</p>
+              </div>
+            </div>
+          )}
 
           <div className="sm:col-span-2 flex justify-center mt-2">
             <button
