@@ -10,7 +10,7 @@ export const AboutSection: React.FC = () => {
           About the Event
         </h2>
         <p className="text-[rgba(0,0,0,0.49)] text-xl font-semibold leading-6 tracking-[0.03125rem] text-center max-sm:text-lg max-sm:leading-6">
-          Dance, enjoy, and make a difference with Street Cause
+          Join Street Cause for Navratri Nirvana, an energetic Dandiya night where celebration meets purpose. Dance for a difference, come for the festive fun and contribute to social development with every step.
         </p>
       </header>
       
@@ -46,7 +46,7 @@ export const AboutSection: React.FC = () => {
                 <Calendar className="w-6 h-6 text-white" />
               </div>
               <p className="text-black text-xl font-semibold leading-10 tracking-[0.03125rem] max-sm:text-lg max-sm:leading-6 max-sm:flex-1">
-                Date → 25th October 2025
+                Date → 20th September 2025
               </p>
             </div>
             
@@ -55,7 +55,7 @@ export const AboutSection: React.FC = () => {
                 <Clock className="w-6 h-6 text-white" />
               </div>
               <p className="text-black text-xl font-semibold leading-10 tracking-[0.03125rem] max-sm:text-lg max-sm:leading-6 max-sm:flex-1">
-                Time → 7:00 PM onwards
+                Time → 6:00 PM onwards
               </p>
             </div>
             
@@ -64,18 +64,22 @@ export const AboutSection: React.FC = () => {
                 <MapPin className="w-6 h-6 text-white" />
               </div>
               <p className="text-black text-xl font-semibold leading-10 tracking-[0.03125rem] max-sm:text-lg max-sm:leading-6 max-sm:flex-1">
-                Venue → ABC Grounds, Hyderabad
+                Venue → Nampally Exhibition Grounds
               </p>
             </div>
           </div>
           
-          <Image
-            src="/images/footermap.png"
-            alt="Event venue map"
-            width={596}
-            height={151}
-            className="h-[9.4375rem] w-full border object-cover rounded-xl border-solid border-[#CECECE]"
-          />
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3806.795!2d78.4728!3d17.3850!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb99e2c6b7f1b7%3A0x2c6b7f1b7f1b7f1b!2sNampally%20Exhibition%20Grounds!5e0!3m2!1sen!2sin!4v1694820000000!5m2!1sen!2sin"
+            width="100%"
+            height="151"
+            style={{ border: 0 }}
+            allowFullScreen
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            className="h-[9.4375rem] w-full border rounded-xl border-solid border-[#CECECE]"
+            title="Event venue location"
+          ></iframe>
         </aside>
       </div>
     </section>

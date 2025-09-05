@@ -33,13 +33,13 @@ export const PassSection: React.FC = () => {
   const passes = [
     {
       title: "Dandiya Dhoom (General)",
-      description: "Entry for one, access to all event activities.",
+      description: "Entry for one, Regular Access",
       price: "₹499",
       image: "/images/pass1.png"
     },
     {
       title: "Garba Gold (VIP)",
-      description: "Front-row access, free snacks, photo zone.",
+      description: "Entry for one, Front Row Access",
       price: "₹999",
       image: "/images/pass2.png"
     }

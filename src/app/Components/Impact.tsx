@@ -22,7 +22,7 @@ export const ImpactSection: React.FC = () => {
   ];
 
   return (
-    <section className="w-full h-[46.3125rem] shadow-[0_1rem_4rem_0_rgba(255,255,255,0.25)] relative px-0 py-20 max-sm:h-auto max-sm:px-4 max-sm:py-16 bg-gradient-to-b from-[#a00357] to-[#6b022e]">
+    <section className="w-full shadow-[0_1rem_4rem_0_rgba(255,255,255,0.25)] relative px-0 py-20 max-sm:h-auto max-sm:px-4 max-sm:py-16 bg-gradient-to-b from-[#a00357] to-[#6b022e]">
       <Image
         src="/images/impactbg.svg"
         alt="Impact background"
@@ -33,11 +33,22 @@ export const ImpactSection: React.FC = () => {
       <div className="relative z-[1] mx-auto my-0 px-[8.8125rem] py-0 max-sm:px-5 max-sm:py-0">
         <header className="flex flex-col justify-center items-center gap-7 w-[40.1875rem] mt-0 mb-20 mx-auto max-sm:w-[95%] max-sm:mb-10">
           <h2 className="text-white text-4xl font-bold leading-10 tracking-[0.03125rem] text-center max-sm:text-3xl max-sm:leading-9">
-            Your Impact with Street Cause
+            16 Years of Impact
           </h2>
-          <p className="text-white text-2xl font-normal leading-6 tracking-[0.03125rem] text-center max-sm:text-lg max-sm:leading-6">
-            Here&apos;s how your support changes lives.
-          </p>
+          <div className="flex flex-row flex-wrap justify-center gap-6 max-sm:gap-4 text-center">
+            <p className="text-white text-xl font-normal leading-6 tracking-[0.03125rem] max-sm:text-lg max-sm:leading-6 whitespace-nowrap">
+              People impacted – 3 Million+
+            </p>
+            <p className="text-white text-xl font-normal leading-6 tracking-[0.03125rem] max-sm:text-lg max-sm:leading-6 whitespace-nowrap">
+              Animals impacted – 300+
+            </p>
+            <p className="text-white text-xl font-normal leading-6 tracking-[0.03125rem] max-sm:text-lg max-sm:leading-6 whitespace-nowrap">
+              Transformational projects – 50+
+            </p>
+            <p className="text-white text-xl font-normal leading-6 tracking-[0.03125rem] max-sm:text-lg max-sm:leading-6 whitespace-nowrap">
+              Total projects – 15,000+
+            </p>
+          </div>
         </header>
         
         <div className="flex justify-center gap-6 w-full max-md:flex-col max-md:gap-8 max-sm:gap-6">

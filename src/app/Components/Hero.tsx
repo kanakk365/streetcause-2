@@ -31,6 +31,28 @@ export const HeroSection: React.FC = () => {
         sizes="100vw"
       />
       <div className="w-full h-full absolute bg-[rgba(0,0,0,0.36)] left-0 top-0" />
+
+      {/* Left Logo */}
+      <div className="absolute top-4 left-4 z-10 max-sm:top-2 max-sm:left-2">
+        <Image
+          src="/images/logol.png"
+          alt="Left Logo"
+          width={80}
+          height={80}
+          className="max-sm:w-16 max-sm:h-16"
+        />
+      </div>
+
+      {/* Right Logo */}
+      <div className="absolute top-4 right-4 z-10 max-sm:top-2 max-sm:right-2">
+        <Image
+          src="/images/logor.png"
+          alt="Right Logo"
+          width={80}
+          height={80}
+          className="max-sm:w-16 max-sm:h-16"
+        />
+      </div>
       <div className="flex flex-col items-center justify-center gap-6 absolute inset-0 w-full h-full max-md:px-5 max-md:py-8 max-sm:px-4 max-sm:py-6 max-sm:gap-4">
         <header className="flex flex-col justify-center items-center gap-4 w-full">
           <h1 className="text-white text-5xl font-bold leading-[3.3125rem] tracking-[0.03125rem] text-center max-md:text-4xl max-md:leading-[2.75rem] max-sm:text-3xl max-sm:leading-[2.25rem] max-sm:px-4">

@@ -43,15 +43,24 @@ export const WhyFooterSection: React.FC = () => {
       <footer className="w-full pt-20 pb-12 px-0 max-sm:pt-[3.75rem] max-sm:px-0">
         <div className="flex gap-12 max-w-[86.125rem] mx-auto my-0 px-[3.875rem] py-0 max-md:flex-col max-md:gap-10 max-md:px-10 max-md:py-0 max-sm:gap-8 max-sm:px-4 max-sm:py-0 max-sm:flex-col">
           <div className="flex flex-col items-start gap-6 w-[26.8125rem] max-md:w-full">
-            <Image
-              src="/images/logo.png"
-              alt="Street Cause Logo"
-              width={230}
-              height={69}
-              className="object-contain max-sm:w-48 max-sm:h-auto"
-            />
+            <div className="flex items-center gap-4 max-sm:flex-col max-sm:gap-2">
+              <Image
+                src="/images/logo.png"
+                alt="Street Cause Logo"
+                width={180}
+                height={54}
+                className="object-contain max-sm:w-36 max-sm:h-auto"
+              />
+              <Image
+                src="/images/logor.png"
+                alt="Partner Logo"
+                width={60}
+                height={60}
+                className="object-contain max-sm:w-12 max-sm:h-12"
+              />
+            </div>
             <p className="text-white text-lg font-normal leading-[1.625rem] max-sm:text-base max-sm:leading-6">
-              A youth-driven NGO dedicated to community service, empowerment, and creating lasting change across India.
+              Street Cause is a leading student-run NGO that empowers students to create tangible community impact, turning passion into action and building the changemakers of tomorrow.
             </p>
 
             <div className="flex flex-col items-start gap-[0.1875rem]">
@@ -137,15 +146,29 @@ export const WhyFooterSection: React.FC = () => {
                   streetcause@gmail.com
                 </a>
               </div>
+              <div className="flex justify-center items-center gap-2.5 pl-2.5 pr-5 py-1.5 max-sm:pt-2.5 max-sm:pb-1.5 max-sm:px-0">
+                <a
+                  href="https://streetcause.org"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white text-sm font-normal leading-[1.5625rem] hover:text-gray-300 transition-colors"
+                >
+                  streetcause.org
+                </a>
+              </div>
             </div>
 
-            <Image
-              src="/images/footermap.png"
-              alt="Office location map"
-              width={360}
-              height={170}
-              className="object-cover rounded-xl max-sm:w-full max-sm:h-[9.375rem]"
-            />
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3806.795!2d78.4728!3d17.3850!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb99e2c6b7f1b7%3A0x2c6b7f1b7f1b7f1b!2sNampally%20Exhibition%20Grounds!5e0!3m2!1sen!2sin!4v1694820000000!5m2!1sen!2sin"
+              width="100%"
+              height="170"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="rounded-xl max-sm:w-full max-sm:h-[9.375rem]"
+              title="Office location"
+            ></iframe>
           </div>
         </div>
       </footer>
