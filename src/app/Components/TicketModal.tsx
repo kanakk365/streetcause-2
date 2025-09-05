@@ -56,7 +56,7 @@ const TicketModal: React.FC<TicketModalProps> = ({ isOpen, onClose, data }) => {
   return (
     <div className="fixed inset-0 z-[1100] flex items-center justify-center">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-[95vw] max-w-[420px] rounded-2xl p-0 mx-4 bg-white shadow-2xl">
+      <div className="relative w-[95vw] max-w-[420px] rounded-2xl p-0 mx-4 bg-white shadow-2xl max-h-[90vh] overflow-y-auto">
         <div className="rounded-2xl border border-gray-200 overflow-hidden">
           <div className="w-full h-[200px] bg-[#f5f5f5] relative">
             {/* Pass image based on pass type */}

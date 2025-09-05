@@ -81,6 +81,18 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
   const [touched, setTouched] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
+  // Field error states
+  const [errors, setErrors] = useState({
+    name: "",
+    mobile: "",
+    email: "",
+    memberId: "",
+    passPurchase: "",
+    passType: "",
+    memberType: "",
+    paymentMode: ""
+  });
+
   useEffect(() => {
     if (initialPassType && isOpen) {
       setPassType(initialPassType);
@@ -115,6 +127,46 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
     const baseAmount = /vip/i.test(passType) ? 999 : 309;
     return baseAmount * passCount;
   }, [passType, passCount]);
+
+  // Validate individual fields
+  const validateField = (fieldName: string, value: string) => {
+    switch (fieldName) {
+      case 'name':
+        return value.trim().length < 2 ? "Name must be at least 2 characters" : "";
+      case 'mobile':
+        return !/^\d{10}$/.test(value.trim()) ? "Mobile must be 10 digits" : "";
+      case 'email':
+        return !/.+@.+\..+/.test(value.trim()) ? "Please enter a valid email" : "";
+      case 'memberId':
+        return value.trim().length === 0 ? "Member ID is required" : "";
+      case 'passPurchase':
+        return Number(value || 0) < 1 ? "Please enter at least 1 pass" : "";
+      case 'passType':
+        return value === "Pass Type" ? "Please select a pass type" : "";
+      case 'memberType':
+        return value === "Member Type" ? "Please select a member type" : "";
+      case 'paymentMode':
+        return value === "Payment Mode" ? "Please select a payment mode" : "";
+      default:
+        return "";
+    }
+  };
+
+  // Update errors when fields change
+  useEffect(() => {
+    if (touched) {
+      setErrors({
+        name: validateField('name', name),
+        mobile: validateField('mobile', mobile),
+        email: validateField('email', email),
+        memberId: validateField('memberId', memberId),
+        passPurchase: validateField('passPurchase', passPurchase),
+        passType: validateField('passType', passType),
+        memberType: validateField('memberType', memberType),
+        paymentMode: validateField('paymentMode', paymentMode)
+      });
+    }
+  }, [name, mobile, email, memberId, passPurchase, passType, memberType, paymentMode, touched]);
 
   const isValid = useMemo(() => {
     const mobileOk = /^\d{10}$/.test(mobile.trim());
@@ -231,90 +283,101 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center">
       <div className="absolute  inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-[95vw] max-w-[700px] rounded-2xl p-4 sm:p-8 md:p-10 mx-4 bg-[#082ca7]">
+      <div className="relative w-[95vw] max-w-[700px] rounded-2xl p-4 sm:p-8 md:p-10 mx-4 bg-[#082ca7] max-h-[90vh] overflow-y-auto">
         <header className="flex flex-col items-center gap-2 mb-6 sm:mb-10">
           <h2 className="text-white text-2xl sm:text-3xl font-semibold text-center">Get Your Pass</h2>
           <p className="text-white/90 text-sm sm:text-base text-center">Fill in the details to secure your entry.</p>
         </header>
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 md:gap-10">
-          <input
-            className="rounded-xl bg-white/95 px-4 py-3 outline-none placeholder:text-gray-500"
-            placeholder="Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <input
-            className="rounded-xl bg-white/95 px-4 py-3 outline-none placeholder:text-gray-500"
-            placeholder="Mobile Number"
-            inputMode="numeric"
-            value={mobile}
-            onChange={(e) => setMobile(e.target.value.replace(/[^0-9]/g, ""))}
-          />
-          <input
-            className="rounded-xl bg-white/95 px-4 py-3 outline-none placeholder:text-gray-500"
-            placeholder="Mail ID"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <input
-            className="rounded-xl bg-white/95 px-4 py-3 outline-none placeholder:text-gray-500"
-            placeholder="Member ID"
-            value={memberId}
-            onChange={(e) => setMemberId(e.target.value)}
-          />
-          <input
-            className="rounded-xl bg-white/95 px-4 py-3 outline-none placeholder:text-gray-500"
-            placeholder="Number of Passes"
-            type="number"
-            min="1"
-            value={passPurchase}
-            onChange={(e) => setPassPurchase(e.target.value)}
-          />
-          <select
-            className="rounded-xl bg-white/95 px-4 py-3 outline-none text-gray-700"
-            value={passType}
-            onChange={(e) => setPassType(e.target.value)}
-          >
-            <option>Pass Type</option>
-            <option>Dandiya Dhoom (General)</option>
-            <option>Garba Gold (VIP)</option>
-          </select>
-          <select
-            className="rounded-xl bg-white/95 px-4 py-3 outline-none text-gray-700"
-            value={memberType}
-            onChange={(e) => setMemberType(e.target.value)}
-          >
-            <option>Member Type</option>
-            <option>L1</option>
-            <option>L2</option>
-            <option>L4</option>
-          </select>
-          <select
-            className="rounded-xl bg-white/95 px-4 py-3 outline-none text-gray-700"
-            value={paymentMode}
-            onChange={(e) => setPaymentMode(e.target.value)}
-          >
-            <option>Payment Mode</option>
-            <option>UPI</option>
-            <option>Card</option>
-            <option>Net Banking</option>
-            <option>Cash</option>
-          </select>
+          <div className="flex flex-col">
+            <input
+              className="rounded-xl bg-white/95 px-4 py-3 outline-none placeholder:text-gray-500"
+              placeholder="Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+            {errors.name && <span className="text-[#e5081f] text-sm mt-1">{errors.name}</span>}
+          </div>
+          <div className="flex flex-col">
+            <input
+              className="rounded-xl bg-white/95 px-4 py-3 outline-none placeholder:text-gray-500"
+              placeholder="Mobile Number"
+              inputMode="numeric"
+              value={mobile}
+              onChange={(e) => setMobile(e.target.value.replace(/[^0-9]/g, ""))}
+            />
+            {errors.mobile && <span className="text-[#e5081f] text-sm mt-1">{errors.mobile}</span>}
+          </div>
+          <div className="flex flex-col">
+            <input
+              className="rounded-xl bg-white/95 px-4 py-3 outline-none placeholder:text-gray-500"
+              placeholder="Mail ID"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            {errors.email && <span className="text-[#e5081f] text-sm mt-1">{errors.email}</span>}
+          </div>
+          <div className="flex flex-col">
+            <input
+              className="rounded-xl bg-white/95 px-4 py-3 outline-none placeholder:text-gray-500"
+              placeholder="Member ID"
+              value={memberId}
+              onChange={(e) => setMemberId(e.target.value)}
+            />
+            {errors.memberId && <span className="text-[#e5081f] text-sm mt-1">{errors.memberId}</span>}
+          </div>
+          <div className="flex flex-col">
+            <input
+              className="rounded-xl bg-white/95 px-4 py-3 outline-none placeholder:text-gray-500"
+              placeholder="Number of Passes"
+              type="number"
+              min="1"
+              value={passPurchase}
+              onChange={(e) => setPassPurchase(e.target.value)}
+            />
+            {errors.passPurchase && <span className="text-[#e5081f] text-sm mt-1">{errors.passPurchase}</span>}
+          </div>
+          <div className="flex flex-col">
+            <select
+              className="rounded-xl bg-white/95 px-4 py-3 outline-none text-gray-700"
+              value={passType}
+              onChange={(e) => setPassType(e.target.value)}
+            >
+              <option>Pass Type</option>
+              <option>Dandiya Dhoom (General)</option>
+              <option>Garba Gold (VIP)</option>
+            </select>
+            {errors.passType && <span className="text-[#e5081f] text-sm mt-1">{errors.passType}</span>}
+          </div>
+          <div className="flex flex-col">
+            <select
+              className="rounded-xl bg-white/95 px-4 py-3 outline-none text-gray-700"
+              value={memberType}
+              onChange={(e) => setMemberType(e.target.value)}
+            >
+              <option>Member Type</option>
+              <option>L1</option>
+              <option>L2</option>
+              <option>L4</option>
+            </select>
+            {errors.memberType && <span className="text-[#e5081f] text-sm mt-1">{errors.memberType}</span>}
+          </div>
+          <div className="flex flex-col">
+            <select
+              className="rounded-xl bg-white/95 px-4 py-3 outline-none text-gray-700"
+              value={paymentMode}
+              onChange={(e) => setPaymentMode(e.target.value)}
+            >
+              <option>Payment Mode</option>
+              <option>UPI</option>
+              <option>Card</option>
+              <option>Net Banking</option>
+            </select>
+            {errors.paymentMode && <span className="text-[#e5081f] text-sm mt-1">{errors.paymentMode}</span>}
+          </div>
 
-          {!isValid && touched && (
-            <div className="sm:col-span-2 text-sm text-white/90">
-              <ul className="list-disc list-inside space-y-1">
-                <li>Enter a valid name.</li>
-                <li>Mobile must be 10 digits.</li>
-                <li>Provide a valid email.</li>
-                <li>Provide a valid Member ID.</li>
-                <li>Enter at least 1 in Number of Passes.</li>
-                <li>Select pass type, member type and payment mode.</li>
-              </ul>
-            </div>
-          )}
 
           {/* Display Amount to Pay */}
           {totalAmount > 0 && (
