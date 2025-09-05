@@ -56,7 +56,7 @@ export const PassSection: React.FC = () => {
         </p>
       </header>
       
-      <div className="flex justify-center items-center gap-10 mx-auto my-0 px-[15.0625rem] py-0 max-md:flex-col max-md:gap-8 max-md:px-10 max-md:py-0 max-sm:px-4 max-sm:py-0 max-sm:gap-6 max-sm:flex-col">
+      <div className="flex justify-center items-center gap-10 mx-auto my-0 px-[15.0625rem] py-0 max-xl:px-[8rem] max-xl:gap-8 max-lg:px-8 max-lg:gap-6 lg:px-[10rem] max-md:flex-col max-md:gap-8 max-md:px-10 max-md:py-0 max-sm:px-4 max-sm:py-0 max-sm:gap-6 max-sm:flex-col">
         {passes.map((pass, index) => (
           <EventCard
             key={index}
