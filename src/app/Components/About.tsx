@@ -35,7 +35,7 @@ export const AboutSection: React.FC = () => {
             alt="Navratri celebration panoramic view"
             width={593}
             height={238}
-            className="col-span-2 w-[37.0625rem] h-[14.875rem] object-cover rounded-xl max-sm:w-full max-sm:h-[11.25rem]"
+            className="col-span-2 w-[37.0625rem] h-[14.875rem] object-cover rounded-xl max-md:col-span-1 max-sm:w-full max-sm:h-[11.25rem]"
           />
         </div>
         
@@ -70,7 +70,7 @@ export const AboutSection: React.FC = () => {
           </div>
           
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3806.795!2d78.4728!3d17.3850!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb99e2c6b7f1b7%3A0x2c6b7f1b7f1b7f1b!2sNampally%20Exhibition%20Grounds!5e0!3m2!1sen!2sin!4v1694820000000!5m2!1sen!2sin"
+            src="https://maps.google.com/maps?q=17.409144846633414,78.46033230372608&t=&z=15&ie=UTF8&iwloc=&output=embed"
             width="100%"
             height="151"
             style={{ border: 0 }}

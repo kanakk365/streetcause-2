@@ -6,18 +6,23 @@ export const ImpactSection: React.FC = () => {
   const impacts = [
     {
       image: "/images/impact1.png",
-      title: "500+ students educated",
-      alt: "Students in classroom"
+      title: "People impacted – 3 Million+",
+      alt: "People impacted"
     },
     {
       image: "/images/impact2.png",
-      title: "2000+ meals served",
-      alt: "Community meal service"
+      title: "Animals impacted – 300+",
+      alt: "Animals impacted"
     },
     {
       image: "/images/impact3.png",
-      title: "1312+ Patients treated",
-      alt: "Medical care being provided"
+      title: "Transformational projects – 50+",
+      alt: "Transformational projects"
+    },
+    {
+      image: "/images/impact4.png",
+      title: "Total projects – 15,000+",
+      alt: "Total projects"
     }
   ];
 
@@ -35,23 +40,9 @@ export const ImpactSection: React.FC = () => {
           <h2 className="text-white text-4xl font-bold leading-10 tracking-[0.03125rem] text-center max-sm:text-3xl max-sm:leading-9">
             16 Years of Impact
           </h2>
-          <div className="flex flex-row flex-wrap justify-center gap-6 max-sm:gap-4 text-center">
-            <p className="text-white text-xl font-normal leading-6 tracking-[0.03125rem] max-sm:text-lg max-sm:leading-6 whitespace-nowrap">
-              People impacted – 3 Million+
-            </p>
-            <p className="text-white text-xl font-normal leading-6 tracking-[0.03125rem] max-sm:text-lg max-sm:leading-6 whitespace-nowrap">
-              Animals impacted – 300+
-            </p>
-            <p className="text-white text-xl font-normal leading-6 tracking-[0.03125rem] max-sm:text-lg max-sm:leading-6 whitespace-nowrap">
-              Transformational projects – 50+
-            </p>
-            <p className="text-white text-xl font-normal leading-6 tracking-[0.03125rem] max-sm:text-lg max-sm:leading-6 whitespace-nowrap">
-              Total projects – 15,000+
-            </p>
-          </div>
         </header>
         
-        <div className="flex justify-center gap-6 w-full max-md:flex-col max-md:gap-8 max-sm:gap-6">
+        <div className="grid grid-cols-2 justify-items-center gap-x-6 gap-y-16 w-full max-sm:grid-cols-1 max-sm:gap-x-4 max-sm:gap-y-8">
           {impacts.map((impact, index) => (
             <ImpactCard
               key={index}

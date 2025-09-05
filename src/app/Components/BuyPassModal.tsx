@@ -112,7 +112,7 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
   // Calculate total amount based on pass type and quantity
   const totalAmount = useMemo(() => {
     if (passCount <= 0) return 0;
-    const baseAmount = /vip/i.test(passType) ? 1000 : 500;
+    const baseAmount = /vip/i.test(passType) ? 999 : 309;
     return baseAmount * passCount;
   }, [passType, passCount]);
 
@@ -165,7 +165,7 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
         const ticket = json.data;
 
         // Step 2: Create Razorpay order via checkout endpoint
-        const amountRupees = /vip/i.test(ticket.passType) ? 1000 : 500;
+        const amountRupees = /vip/i.test(ticket.passType) ? 999 : 309;
         const cRes = await fetch("https://scpapi.elitceler.com/api/v1/payments/checkout", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -324,7 +324,7 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
                 <p className="text-white text-2xl font-bold">₹{totalAmount}</p>
                 {passCount > 1 && (
                   <p className="text-white/80 text-sm mt-1">
-                    {passCount} passes × ₹{/vip/i.test(passType) ? 1000 : 500}
+                    {passCount} passes × ₹{/vip/i.test(passType) ? 999 : 309}
                   </p>
                 )}
               </div>

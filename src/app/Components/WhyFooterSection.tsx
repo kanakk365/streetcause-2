@@ -174,7 +174,7 @@ export const WhyFooterSection: React.FC = () => {
             </div>
 
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3806.795!2d78.4728!3d17.3850!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb99e2c6b7f1b7%3A0x2c6b7f1b7f1b7f1b!2sNampally%20Exhibition%20Grounds!5e0!3m2!1sen!2sin!4v1694820000000!5m2!1sen!2sin"
+              src="https://maps.google.com/maps?q=17.409144846633414,78.46033230372608&t=&z=15&ie=UTF8&iwloc=&output=embed"
               width="100%"
               height="170"
               style={{ border: 0 }}
