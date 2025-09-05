@@ -4,29 +4,37 @@ import Image from 'next/image';
 export const WhyFooterSection: React.FC = () => {
   const socialIcons = [
     {
-      name: "X (Twitter)",
-      icon: "/images/x.svg"
-    },
-    {
-      name: "Facebook",
-      icon: "/images/facebook.svg"
-    },
-    {
       name: "Instagram",
-      icon: "/images/insta.svg"
+      icon: "/images/insta.svg",
+      url: "https://www.instagram.com/streetcause.hyderabad?igsh=MWcxZXpoMGNndnp1dg=="
+    },
+    {
+      name: "LinkedIn",
+      icon: "/images/linkedin.svg",
+      url: "https://www.linkedin.com/in/street-cause-hyderabad-5b4a5b369?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app"
+    },
+    {
+      name: "YouTube",
+      icon: "/images/youtube.svg",
+      url: "https://youtube.com/@streetcause?si=kKDl7GhoKxEtpwIc"
     }
   ];
 
   const quickLinks = [
-    "Home", "About Us", "Our Projects", "News & Updates", "Get Involved", "Contact Us"
+    { name: "Home", url: "https://streetcause.org/" },
+    { name: "About Us", url: "https://streetcause.org/aboutus" },
+    { name: "News & Updates", url: "https://streetcause.org/sc_updates" },
+    { name: "Contact Us", url: "https://streetcause.org/contactus" }
   ];
 
   const getInvolvedLinks = [
-    "Volunteer With Us", "Donate", "Become a Partner"
+    { name: "Donate", url: "https://streetcause.org/donate/" },
+    { name: "Volunteer With Us", url: "#" },
+    { name: "Become a Partner", url: "#" }
   ];
 
   return (
-    <section className="w-full bg-gradient-to-b from-[#a00357] to-[#6b022e]">
+    <section className="w-full bg-[#800020]">
       {/* Why Section Content */}
       <div className="w-full px-0 py-20 max-sm:h-auto max-sm:px-0 max-sm:py-[3.75rem]">
         <div className="flex flex-col items-center gap-14 w-[76.75rem] mx-auto my-0 px-[6.625rem] py-0 max-sm:w-[95%] max-sm:gap-7 max-sm:px-5 max-sm:py-0">
@@ -43,20 +51,20 @@ export const WhyFooterSection: React.FC = () => {
       <footer className="w-full pt-20 pb-12 px-0 max-sm:pt-[3.75rem] max-sm:px-0">
         <div className="flex gap-12 max-w-[86.125rem] mx-auto my-0 px-[3.875rem] py-0 max-md:flex-col max-md:gap-10 max-md:px-10 max-md:py-0 max-sm:gap-8 max-sm:px-4 max-sm:py-0 max-sm:flex-col">
           <div className="flex flex-col items-start gap-6 w-[26.8125rem] max-md:w-full">
-            <div className="flex items-center gap-4 max-sm:flex-col max-sm:gap-2">
+            <div className="flex items-center gap-4 max-sm:gap-2">
               <Image
                 src="/images/logo.png"
                 alt="Street Cause Logo"
-                width={180}
-                height={54}
-                className="object-contain max-sm:w-36 max-sm:h-auto"
+                width={240}
+                height={72}
+                className="object-contain max-sm:w-48 max-sm:h-auto"
               />
               <Image
                 src="/images/logor.png"
                 alt="Partner Logo"
-                width={60}
-                height={60}
-                className="object-contain max-sm:w-12 max-sm:h-12"
+                width={100}
+                height={100}
+                className="object-contain max-sm:w-20 max-sm:h-20"
               />
             </div>
             <p className="text-white text-lg font-normal leading-[1.625rem] max-sm:text-base max-sm:leading-6">
@@ -69,19 +77,22 @@ export const WhyFooterSection: React.FC = () => {
               </h3>
               <div className="flex items-start gap-6 max-sm:gap-4">
                 {socialIcons.map((social, index) => (
-                  <button
+                  <a
                     key={index}
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="hover:opacity-80 transition-opacity w-13 h-13 rounded-full bg-[#b97c98] bg-opacity-20 flex items-center justify-center p-2"
                     aria-label={social.name}
                   >
                     <Image
                       src={social.icon}
                       alt={social.name}
-                      width={social.name === "Facebook" ? 18 : 24}
-                      height={social.name === "Facebook" ? 18 : 24}
+                      width={24}
+                      height={24}
                       className="object-contain"
                     />
-                  </button>
+                  </a>
                 ))}
               </div>
             </div>
@@ -95,10 +106,12 @@ export const WhyFooterSection: React.FC = () => {
               {quickLinks.map((link, index) => (
                 <li key={index}>
                   <a
-                    href="#"
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-white text-sm font-normal cursor-pointer hover:text-gray-300 transition-colors"
                   >
-                    {link}
+                    {link.name}
                   </a>
                 </li>
               ))}
@@ -113,10 +126,12 @@ export const WhyFooterSection: React.FC = () => {
               {getInvolvedLinks.map((link, index) => (
                 <li key={index}>
                   <a
-                    href="#"
+                    href={link.url}
+                    target={link.url !== "#" ? "_blank" : "_self"}
+                    rel={link.url !== "#" ? "noopener noreferrer" : undefined}
                     className="text-white text-sm font-normal cursor-pointer hover:text-gray-300 transition-colors"
                   >
-                    {link}
+                    {link.name}
                   </a>
                 </li>
               ))}

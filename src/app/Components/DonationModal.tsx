@@ -249,7 +249,7 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
             memberId: donationData.memberId,
             memberType: donationData.memberType,
           },
-          theme: { color: "#aa0a63" },
+          theme: { color: "#800020" },
           handler: async (resp: RazorpayPaymentSuccess) => {
             // Payment successful, show ticket
             console.log("Razorpay success:", resp);
@@ -305,7 +305,7 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center">
       <div className="absolute  inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-[95vw] max-w-[700px] rounded-2xl p-4 sm:p-8 md:p-10 mx-4" style={{ background: "linear-gradient(180deg, #aa0a63 0%, #760233 100%)" }}>
+      <div className="relative w-[95vw] max-w-[700px] rounded-2xl p-4 sm:p-8 md:p-10 mx-4 bg-[#800020]">
         <header className="flex flex-col items-center gap-2 mb-6 sm:mb-10">
           <h2 className="text-white text-2xl sm:text-3xl font-semibold text-center">Make a Donation</h2>
           <p className="text-white/90 text-sm sm:text-base text-center">Every rupee counts towards transforming lives.</p>
@@ -315,53 +315,53 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
           <div className="flex flex-col">
             <input
               className={`rounded-xl bg-white/95 px-4 py-3 outline-none placeholder:text-gray-500 ${
-                errors.name ? 'border-2 border-red-500' : ''
+                errors.name ? 'border-2 border-[#e5081f]' : ''
               }`}
               placeholder="Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
-            {errors.name && <span className="text-red-400 text-sm mt-1">{errors.name}</span>}
+            {errors.name && <span className="text-[#e5081f] text-sm mt-1">{errors.name}</span>}
           </div>
           <div className="flex flex-col">
             <input
               className={`rounded-xl bg-white/95 px-4 py-3 outline-none placeholder:text-gray-500 ${
-                errors.mobile ? 'border-2 border-red-500' : ''
+                errors.mobile ? 'border-2 border-[#e5081f]' : ''
               }`}
               placeholder="Mobile Number"
               inputMode="numeric"
               value={mobile}
               onChange={(e) => setMobile(e.target.value.replace(/[^0-9]/g, ""))}
             />
-            {errors.mobile && <span className="text-red-400 text-sm mt-1">{errors.mobile}</span>}
+            {errors.mobile && <span className="text-[#e5081f] text-sm mt-1">{errors.mobile}</span>}
           </div>
           <div className="flex flex-col">
             <input
               className={`rounded-xl bg-white/95 px-4 py-3 outline-none placeholder:text-gray-500 ${
-                errors.email ? 'border-2 border-red-500' : ''
+                errors.email ? 'border-2 border-[#e5081f]' : ''
               }`}
               placeholder="Mail ID"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            {errors.email && <span className="text-red-400 text-sm mt-1">{errors.email}</span>}
+            {errors.email && <span className="text-[#e5081f] text-sm mt-1">{errors.email}</span>}
           </div>
           <div className="flex flex-col">
             <input
               className={`rounded-xl bg-white/95 px-4 py-3 outline-none placeholder:text-gray-500 ${
-                errors.memberId ? 'border-2 border-red-500' : ''
+                errors.memberId ? 'border-2 border-[#e5081f]' : ''
               }`}
               placeholder="Member ID"
               value={memberId}
               onChange={(e) => setMemberId(e.target.value)}
             />
-            {errors.memberId && <span className="text-red-400 text-sm mt-1">{errors.memberId}</span>}
+            {errors.memberId && <span className="text-[#e5081f] text-sm mt-1">{errors.memberId}</span>}
           </div>
           <div className="flex flex-col">
             <select
               className={`rounded-xl bg-white/95 px-4 py-3 outline-none text-gray-700 ${
-                errors.memberType ? 'border-2 border-red-500' : ''
+                errors.memberType ? 'border-2 border-[#e5081f]' : ''
               }`}
               value={memberType}
               onChange={(e) => setMemberType(e.target.value)}
@@ -371,19 +371,19 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
               <option>L2</option>
               <option>L4</option>
             </select>
-            {errors.memberType && <span className="text-red-400 text-sm mt-1">{errors.memberType}</span>}
+            {errors.memberType && <span className="text-[#e5081f] text-sm mt-1">{errors.memberType}</span>}
           </div>
           <div className="flex flex-col">
             <input
               className={`rounded-xl bg-white/95 px-4 py-3 outline-none placeholder:text-gray-500 ${
-                errors.amount ? 'border-2 border-red-500' : ''
+                errors.amount ? 'border-2 border-[#e5081f]' : ''
               }`}
               placeholder="Donation Amount"
               inputMode="numeric"
               value={amount}
               onChange={(e) => setAmount(e.target.value.replace(/[^0-9]/g, ""))}
             />
-            {errors.amount && <span className="text-red-400 text-sm mt-1">{errors.amount}</span>}
+            {errors.amount && <span className="text-[#e5081f] text-sm mt-1">{errors.amount}</span>}
           </div>
           {/* <select
             className="rounded-xl bg-white/95 px-4 py-3 outline-none text-gray-700"
@@ -398,7 +398,7 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
           <div className="flex flex-col">
             <select
               className={`rounded-xl bg-white/95 px-4 py-3 outline-none text-gray-700 ${
-                errors.paymentMode ? 'border-2 border-red-500' : ''
+                errors.paymentMode ? 'border-2 border-[#e5081f]' : ''
               }`}
               value={paymentMode}
               onChange={(e) => setPaymentMode(e.target.value)}
@@ -409,7 +409,7 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
               <option>Net Banking</option>
               <option>Cash</option>
             </select>
-            {errors.paymentMode && <span className="text-red-400 text-sm mt-1">{errors.paymentMode}</span>}
+            {errors.paymentMode && <span className="text-[#e5081f] text-sm mt-1">{errors.paymentMode}</span>}
           </div>
 
           {/* Display Amount to Pay */}
@@ -426,7 +426,7 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full sm:min-w-[11.25rem] rounded-xl px-6 py-3 text-white font-medium bg-white/20 hover:bg-white/25 border border-white/30 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full sm:min-w-[11.25rem] rounded-xl px-6 py-3 text-white font-medium bg-[#FF7A00] hover:bg-[#e66a00] transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? "Processing..." : "Submit"}
             </button>

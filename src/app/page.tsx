@@ -16,7 +16,7 @@ export default function Home() {
       <HighlightsSection/>
       <PassSection/>
       <ImpactSection />
-      <ParticipantsSection />
+      {/* <ParticipantsSection /> */}
       <WhyFooterSection />
       <CopyrightStrip />
     </main>

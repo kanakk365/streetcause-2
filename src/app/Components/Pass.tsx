@@ -64,7 +64,7 @@ export const PassSection: React.FC = () => {
             description={pass.description}
             price={pass.price}
             image={pass.image}
-            onBuyNow={() => handleBuyPass(pass.title)}
+            onSellPass={() => handleBuyPass(pass.title)}
           />
         ))}
       </div>

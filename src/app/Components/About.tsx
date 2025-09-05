@@ -42,7 +42,7 @@ export const AboutSection: React.FC = () => {
         <aside className="flex w-[39.75rem] h-[31.5625rem] flex-col justify-center items-center gap-2.5 bg-[#FDF3EB] p-10 rounded-xl max-md:w-full max-md:max-w-[37.5rem] max-md:mx-auto max-md:my-0 max-sm:h-auto max-sm:p-6 max-sm:gap-4 max-sm:w-full max-sm:rounded-2xl">
           <div className="flex flex-col items-start gap-10 w-[31.375rem] p-2.5 max-sm:w-full max-sm:gap-5 mb-10">
             <div className="flex items-start gap-3 w-full max-sm:gap-4 max-sm:items-start">
-              <div className="flex w-[2.5625rem] h-[2.5625rem] justify-center items-center gap-2.5 shadow-[0_1rem_4rem_0_rgba(255,255,255,0.25)] rounded-[5.9375rem] bg-gradient-to-b from-[#a00357] to-[#6b022e]">
+              <div className="flex w-[2.5625rem] h-[2.5625rem] justify-center items-center gap-2.5 shadow-[0_1rem_4rem_0_rgba(255,255,255,0.25)] rounded-[5.9375rem] bg-[#800020]">
                 <Calendar className="w-6 h-6 text-white" />
               </div>
               <p className="text-black text-xl font-semibold leading-10 tracking-[0.03125rem] max-sm:text-lg max-sm:leading-6 max-sm:flex-1">
@@ -51,7 +51,7 @@ export const AboutSection: React.FC = () => {
             </div>
             
             <div className="flex items-start gap-3 w-full max-sm:gap-4 max-sm:items-start">
-              <div className="flex w-[2.5625rem] h-[2.5625rem] justify-center items-center gap-2.5 shadow-[0_1rem_4rem_0_rgba(255,255,255,0.25)] rounded-[5.9375rem] bg-gradient-to-b from-[#a00357] to-[#6b022e]">
+              <div className="flex w-[2.5625rem] h-[2.5625rem] justify-center items-center gap-2.5 shadow-[0_1rem_4rem_0_rgba(255,255,255,0.25)] rounded-[5.9375rem] bg-[#800020]">
                 <Clock className="w-6 h-6 text-white" />
               </div>
               <p className="text-black text-xl font-semibold leading-10 tracking-[0.03125rem] max-sm:text-lg max-sm:leading-6 max-sm:flex-1">
@@ -60,7 +60,7 @@ export const AboutSection: React.FC = () => {
             </div>
             
             <div className="flex items-start gap-3 w-full max-sm:gap-4 max-sm:items-start">
-              <div className="flex w-[2.5625rem] h-[2.5625rem] justify-center items-center gap-2.5 shadow-[0_1rem_4rem_0_rgba(255,255,255,0.25)] rounded-[5.9375rem] bg-gradient-to-b from-[#a00357] to-[#6b022e]">
+              <div className="flex w-[2.5625rem] h-[2.5625rem] justify-center items-center gap-2.5 shadow-[0_1rem_4rem_0_rgba(255,255,255,0.25)] rounded-[5.9375rem] bg-[#800020]">
                 <MapPin className="w-6 h-6 text-white" />
               </div>
               <p className="text-black text-xl font-semibold leading-10 tracking-[0.03125rem] max-sm:text-lg max-sm:leading-6 max-sm:flex-1">

@@ -65,7 +65,7 @@ export const HeroSection: React.FC = () => {
         <div className="flex items-center gap-4 max-md:flex-col max-md:gap-4 max-sm:gap-3 max-sm:w-full max-sm:max-w-[90%] max-sm:flex-col">
           <button
             onClick={handleSellPass}
-            className="flex justify-center items-center font-semibold shadow-[0_1rem_4rem_0_rgba(255,255,255,0.25)] cursor-pointer px-8 py-3 rounded-[4.6875rem] max-md:w-48 max-sm:w-full max-sm:h-12 max-sm:px-6 max-sm:py-4 bg-gradient-to-b from-[#f6e024] to-[#fea500] hover:from-[#e6d024] hover:to-[#ea9500] transition-all duration-300"
+            className="flex justify-center items-center font-semibold shadow-[0_1rem_4rem_0_rgba(255,255,255,0.25)] cursor-pointer px-8 py-3 rounded-[4.6875rem] max-md:w-48 max-sm:w-full max-sm:h-12 max-sm:px-6 max-sm:py-4 bg-[#FF7A00] hover:bg-[#e66a00] transition-all duration-300"
           >
             <span className="text-black text-xl leading-6 tracking-[0.03125rem] max-sm:text-base">
               Sell a pass
@@ -73,7 +73,7 @@ export const HeroSection: React.FC = () => {
           </button>
           <button
             onClick={handleDonate}
-            className="flex justify-center items-center gap-2.5 shadow-[0_1rem_4rem_0_rgba(255,255,255,0.25)] cursor-pointer px-5 py-3 rounded-[5.9375rem] max-md:w-48 max-sm:w-full max-sm:h-12 max-sm:px-6 max-sm:py-4 bg-gradient-to-b from-[#a00357] to-[#6b022e] hover:from-[#900350] hover:to-[#5a0226] transition-all duration-300"
+            className="flex justify-center items-center gap-2.5 shadow-[0_1rem_4rem_0_rgba(255,255,255,0.25)] cursor-pointer px-5 py-3 rounded-[5.9375rem] max-md:w-48 max-sm:w-full max-sm:h-12 max-sm:px-6 max-sm:py-4 bg-[#800020] hover:bg-[#600018] transition-all duration-300"
           >
             <span className="text-white text-xl font-semibold leading-6 tracking-[0.03125rem] max-sm:text-base">
               Donate now
