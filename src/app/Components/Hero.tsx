@@ -16,7 +16,7 @@ export const HeroSection: React.FC = () => {
   };
 
   return (
-    <section className="max-w-screen min-h-screen relative max-sm:min-h-[100svh] max-sm:h-[100svh]">
+    <section className="max-w-screen min-h-[90vh] relative max-sm:min-h-[100svh] max-sm:h-[100svh]">
       <Image
         src="/images/herobg.png"
         alt="Navratri celebration background"

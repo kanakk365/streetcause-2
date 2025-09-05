@@ -2,14 +2,21 @@
 import { EventCard } from '../ui/EventCard';
 import React, { useState } from 'react';
 import BuyPassModal from './BuyPassModal';
+import TicketModal from './TicketModal';
 
 export const PassSection: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPassType, setSelectedPassType] = useState<string | undefined>(undefined);
+  const [ticketData, setTicketData] = useState<any | null>(null);
+  const [showTicket, setShowTicket] = useState(false);
 
   const handleBuyPass = (passType: string) => {
     setSelectedPassType(passType);
     setIsModalOpen(true);
+  };
+  const handleSuccess = (ticket: any) => {
+    setTicketData(ticket);
+    setShowTicket(true);
   };
 
   const passes = [
@@ -55,6 +62,17 @@ export const PassSection: React.FC = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         initialPassType={selectedPassType}
+        onSuccess={handleSuccess}
+      />
+      <TicketModal
+        isOpen={showTicket}
+        onClose={() => setShowTicket(false)}
+        data={ticketData ? {
+          passPurchaseName: ticketData.passPurchaseName,
+          passType: ticketData.passType,
+          passId: ticketData.passId,
+          qrCode: ticketData.qrCode,
+        } : null}
       />
     </section>
   );

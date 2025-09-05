@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Montserrat, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import Script from "next/script";
+import { Toaster } from "@/components/ui/sonner";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -28,7 +30,9 @@ export default function RootLayout({
       <body
         className={`${montserrat.variable} ${jetbrainsMono.variable} antialiased`}
       >
+        <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
         {children}
+        <Toaster />
       </body>
     </html>
   );

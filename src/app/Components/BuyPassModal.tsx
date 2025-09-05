@@ -1,23 +1,85 @@
 "use client"
 
 import React, { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
+
+// Minimal Razorpay typings for Checkout.js
+declare global {
+  interface Window {
+    Razorpay: new (options: RazorpayOptions) => RazorpayInstance;
+  }
+}
+
+type RazorpayPaymentSuccess = {
+  razorpay_payment_id: string;
+  razorpay_order_id: string;
+  razorpay_signature: string;
+};
+
+type RazorpayPaymentFailed = {
+  error: {
+    code: string;
+    description: string;
+    source: string;
+    step: string;
+    reason: string;
+    metadata: Record<string, unknown>;
+  };
+};
+
+type RazorpayOptions = {
+  key: string | undefined;
+  amount: number;
+  currency: string;
+  name: string;
+  description?: string;
+  order_id: string;
+  prefill?: {
+    name?: string;
+    email?: string;
+    contact?: string;
+  };
+  notes?: Record<string, string>;
+  theme?: { color?: string };
+  handler: (response: RazorpayPaymentSuccess) => void;
+};
+
+type RazorpayInstance = {
+  open: () => void;
+  on: (event: "payment.failed", handler: (err: RazorpayPaymentFailed) => void) => void;
+};
 
 type BuyPassModalProps = {
   isOpen: boolean;
   onClose: () => void;
   initialPassType?: string;
+  onSuccess?: (ticket: {
+    id: number;
+    passId: string;
+    passPurchaseName: string;
+    mobileNumber: string;
+    email: string;
+    passType: string;
+    memberId: string;
+    memberType: string;
+    paymentMode: string;
+    qrCode: string;
+    createdAt: string;
+    updatedAt: string;
+  }) => void;
 };
 
-export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, initialPassType }) => {
+export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, initialPassType, onSuccess }) => {
   const [name, setName] = useState("");
   const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");
-  const [passId, setPassId] = useState("");
+  const [memberId, setMemberId] = useState("");
   const [passPurchase, setPassPurchase] = useState<string>("");
   const [passType, setPassType] = useState("Pass Type");
-  const [idType, setIdType] = useState("ID");
+  const [memberType, setMemberType] = useState("Member Type");
   const [paymentMode, setPaymentMode] = useState("Payment Mode");
   const [touched, setTouched] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (initialPassType && isOpen) {
@@ -50,35 +112,111 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
   const isValid = useMemo(() => {
     const mobileOk = /^\d{10}$/.test(mobile.trim());
     const emailOk = /.+@.+\..+/.test(email.trim());
-    const passIdOk = passId.trim().length > 0;
+    const memberIdOk = memberId.trim().length > 0;
     const purchaseOk = passCount > 0;
     return (
       name.trim().length > 1 &&
       mobileOk &&
       emailOk &&
-      passIdOk &&
+      memberIdOk &&
       purchaseOk &&
       passType !== "Pass Type" &&
-      idType !== "ID" &&
+      memberType !== "Member Type" &&
       paymentMode !== "Payment Mode"
     );
-  }, [name, mobile, email, passId, passCount, passType, idType, paymentMode]);
+  }, [name, mobile, email, memberId, passCount, passType, memberType, paymentMode]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setTouched(true);
-    if (!isValid) return;
-    console.log("Pass purchase submitted", {
-      name,
-      mobile,
-      email,
-      passId,
-      quantity: passCount,
-      passType,
-      idType,
-      paymentMode,
-    });
-    onClose();
+    if (!isValid || submitting) return;
+
+    try {
+      setSubmitting(true);
+      const normalizedPassType = /vip/i.test(passType) ? "VIP" : "Normal";
+      const payload = {
+        passPurchaseName: name.trim(),
+        mobileNumber: mobile.trim(),
+        email: email.trim(),
+        passType: normalizedPassType,
+        memberId: memberId.trim(),
+        memberType: memberType.trim(),
+        paymentMode: paymentMode.trim(),
+      };
+
+      // Step 1: Create ticket on backend
+      const res = await fetch("https://scpapi.elitceler.com/api/v1/d1/tickets", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const json = await res.json();
+      if (json?.success && json?.data) {
+        const ticket = json.data;
+
+        // Step 2: Create Razorpay order via checkout endpoint
+        const amountRupees = /vip/i.test(ticket.passType) ? 1000 : 500;
+        const cRes = await fetch("https://scpapi.elitceler.com/api/v1/payments/checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: ticket.passPurchaseName,
+            amount: amountRupees,
+            meta: { passId: ticket.passId, ticketId: ticket.id }
+          })
+        });
+
+        if (!cRes.ok) throw new Error("Failed to create order");
+        const cJson = await cRes.json();
+        const { orderId, amount, currency, keyId } = cJson;
+
+        // Step 3: Open Razorpay Checkout
+        // Ensure checkout.js is loaded on page elsewhere (layout or component)
+        const options: RazorpayOptions = {
+          key: keyId ?? (process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID as string),
+          amount,
+          currency: currency ?? "INR",
+          name: "D1 Pass",
+          description: ticket?.passId ? `Ticket ${ticket.passId}` : "D1 Ticket",
+          order_id: orderId,
+          prefill: {
+            name: ticket.passPurchaseName,
+            email: ticket.email,
+            contact: ticket.mobileNumber,
+          },
+          notes: {
+            passId: ticket.passId ?? "",
+            ticketId: String(ticket?.id ?? ""),
+            memberId: payload.memberId,
+            memberType: payload.memberType,
+          },
+          theme: { color: "#aa0a63" },
+          handler: async (resp: RazorpayPaymentSuccess) => {
+            // Optionally send to verify endpoint here
+            console.log("Razorpay success:", resp);
+            onSuccess?.(ticket);
+            onClose();
+          },
+        };
+
+        const rzp: RazorpayInstance = new window.Razorpay(options);
+        rzp.on("payment.failed", function (err: RazorpayPaymentFailed) {
+          console.error("Razorpay failure:", err);
+          toast.error("Payment failed. Please try again.");
+        });
+        rzp.open();
+      } else {
+        toast.error(json?.message || "Failed to create ticket");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Network error while creating ticket");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -115,9 +253,9 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
           />
           <input
             className="rounded-xl bg-white/95 px-4 py-3 outline-none placeholder:text-gray-500"
-            placeholder="Pass ID"
-            value={passId}
-            onChange={(e) => setPassId(e.target.value)}
+            placeholder="Member ID"
+            value={memberId}
+            onChange={(e) => setMemberId(e.target.value)}
           />
           <input
             className="rounded-xl bg-white/95 px-4 py-3 outline-none placeholder:text-gray-500"
@@ -137,13 +275,13 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
           </select>
           <select
             className="rounded-xl bg-white/95 px-4 py-3 outline-none text-gray-700"
-            value={idType}
-            onChange={(e) => setIdType(e.target.value)}
+            value={memberType}
+            onChange={(e) => setMemberType(e.target.value)}
           >
-            <option>ID</option>
-            <option>Aadhar</option>
-            <option>PAN</option>
-            <option>Passport</option>
+            <option>Member Type</option>
+            <option>L1</option>
+            <option>L2</option>
+            <option>L3</option>
           </select>
           <select
             className="rounded-xl bg-white/95 px-4 py-3 outline-none text-gray-700"
@@ -163,9 +301,9 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
                 <li>Enter a valid name.</li>
                 <li>Mobile must be 10 digits.</li>
                 <li>Provide a valid email.</li>
-                <li>Provide a valid Pass ID.</li>
+                <li>Provide a valid Member ID.</li>
                 <li>Enter at least 1 in Pass Purchase.</li>
-                <li>Select pass type, ID type and payment mode.</li>
+                <li>Select pass type, member type and payment mode.</li>
               </ul>
             </div>
           )}
@@ -175,7 +313,7 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
               type="submit"
               className="w-full sm:min-w-[11.25rem] rounded-xl px-6 py-3 text-white font-medium bg-white/20 hover:bg-white/25 border border-white/30 transition"
             >
-              Submit
+              {submitting ? "Submitting..." : "Submit"}
             </button>
           </div>
         </form>
