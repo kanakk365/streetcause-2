@@ -46,7 +46,7 @@ type RazorpayOptions = {
 
 type RazorpayInstance = {
   open: () => void;
-  on: (event: "payment.failed", handler: (err: RazorpayPaymentFailed) => void) => void;
+  on: (event: "payment.failed" | "modal.dismiss", handler: (err?: RazorpayPaymentFailed | undefined) => void) => void;
 };
 
 type BuyPassModalProps = {
@@ -80,6 +80,7 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
   const [paymentMode, setPaymentMode] = useState("Payment Mode");
   const [touched, setTouched] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState<"idle" | "processing" | "success" | "failed">("idle");
 
   // Field error states
   const [errors, setErrors] = useState({
@@ -100,30 +101,16 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
   }, [initialPassType, isOpen]);
 
   useEffect(() => {
-    if (!isOpen) {
-      // Reset all form data and states when modal closes
-      setName("");
-      setMobile("");
-      setEmail("");
-      setMemberId("");
-      setPassPurchase("");
-      setPassType("Pass Type");
-      setMemberType("Member Type");
-      setPaymentMode("Payment Mode");
-      setTouched(false);
-      setSubmitting(false);
-      setErrors({
-        name: "",
-        mobile: "",
-        email: "",
-        memberId: "",
-        passPurchase: "",
-        passType: "",
-        memberType: "",
-        paymentMode: ""
-      });
-      return;
+    if (isOpen) {
+      setPaymentStatus("idle");
+    } else {
+      // Clear form when modal closes
+      clearForm();
     }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
@@ -144,12 +131,30 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
 
   const passCount = useMemo(() => Number(passPurchase || 0), [passPurchase]);
 
-  // Calculate total amount based on pass type and quantity
-  const totalAmount = useMemo(() => {
-    if (passCount <= 0) return 0;
-    const baseAmount = /vip/i.test(passType) ? 999 : 309;
-    return baseAmount * passCount;
-  }, [passType, passCount]);
+  // Function to clear all form fields
+  const clearForm = () => {
+    setName("");
+    setMobile("");
+    setEmail("");
+    setMemberId("");
+    setPassPurchase("");
+    setPassType("Pass Type");
+    setMemberType("Member Type");
+    setPaymentMode("Payment Mode");
+    setTouched(false);
+    setSubmitting(false);
+    setPaymentStatus("idle");
+    setErrors({
+      name: "",
+      mobile: "",
+      email: "",
+      memberId: "",
+      passPurchase: "",
+      passType: "",
+      memberType: "",
+      paymentMode: ""
+    });
+  };
 
   // Validate individual fields
   const validateField = (fieldName: string, value: string) => {
@@ -191,6 +196,13 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
     }
   }, [name, mobile, email, memberId, passPurchase, passType, memberType, paymentMode, touched]);
 
+  // Calculate total amount based on pass type and quantity
+  const totalAmount = useMemo(() => {
+    if (passCount <= 0) return 0;
+    const baseAmount = /vip/i.test(passType) ? 999 : 309;
+    return baseAmount * passCount;
+  }, [passType, passCount]);
+
   const isValid = useMemo(() => {
     const mobileOk = /^\d{10}$/.test(mobile.trim());
     const emailOk = /.+@.+\..+/.test(email.trim());
@@ -211,10 +223,34 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setTouched(true);
+
+    // Validate all fields and set errors
+    const newErrors = {
+      name: validateField('name', name),
+      mobile: validateField('mobile', mobile),
+      email: validateField('email', email),
+      memberId: validateField('memberId', memberId),
+      passPurchase: validateField('passPurchase', passPurchase),
+      passType: validateField('passType', passType),
+      memberType: validateField('memberType', memberType),
+      paymentMode: validateField('paymentMode', paymentMode)
+    };
+    setErrors(newErrors);
+
     if (!isValid || submitting) return;
+
+    // Add timeout to prevent indefinite loading
+    const timeoutId = setTimeout(() => {
+      if (submitting) {
+        setSubmitting(false);
+        setPaymentStatus("failed");
+        toast.error("Request timed out. Please try again.");
+      }
+    }, 30000); // 30 seconds timeout
 
     try {
       setSubmitting(true);
+      setPaymentStatus("processing");
       const normalizedPassType = /vip/i.test(passType) ? "VIP" : "Normal";
       const payload = {
         passPurchaseName: name.trim(),
@@ -236,24 +272,37 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
       });
 
       const json = await res.json();
+
+      // Handle API errors (non-2xx status codes)
+      if (!res.ok) {
+        throw new Error(json?.message || `HTTP ${res.status}: ${res.statusText}`);
+      }
       if (json?.success && json?.data) {
         const ticket = json.data;
 
         // Step 2: Create Razorpay order via checkout endpoint
         const amountRupees = /vip/i.test(ticket.passType) ? 999 : 309;
+        // Send rupees to backend, let backend handle paise conversion
+        const totalAmount = amountRupees * passCount;
         const cRes = await fetch("https://scpapi.elitceler.com/api/v1/payments/checkout", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             name: ticket.passPurchaseName,
-            amount: amountRupees,
+            amount: totalAmount,
             meta: { passId: ticket.passId, ticketId: ticket.id }
           })
         });
 
         if (!cRes.ok) throw new Error("Failed to create order");
         const cJson = await cRes.json();
-        const { orderId, amount, currency, keyId } = cJson;
+
+        // Extract order details from the nested response structure
+        const order = cJson.order || cJson.paymentUrl;
+        const orderId = order?.id;
+        const amount = order?.amount;
+        const currency = order?.currency || "INR";
+        const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
 
         // Step 3: Open Razorpay Checkout
         // Ensure checkout.js is loaded on page elsewhere (layout or component)
@@ -275,57 +324,86 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
             memberId: payload.memberId,
             memberType: payload.memberType,
           },
-          theme: { color: "#800020" },
+          theme: { color: "#082ca7" },
           handler: async (resp: RazorpayPaymentSuccess) => {
             // Optionally send to verify endpoint here
             console.log("Razorpay success:", resp);
-
-            // Reset submitting state
+            setPaymentStatus("success");
             setSubmitting(false);
-
+            toast.success("Payment successful! Your pass has been booked.");
             onSuccess?.(ticket);
             onClose();
           },
         };
 
-        const rzp: RazorpayInstance = new window.Razorpay(options);
-        rzp.on("payment.failed", function (err: RazorpayPaymentFailed) {
+        const rzp = new window.Razorpay(options);
+        rzp.on("payment.failed", function (err?: RazorpayPaymentFailed) {
           console.error("Razorpay failure:", err);
-          toast.error("Payment failed. Please try again.");
+          setPaymentStatus("failed");
           setSubmitting(false);
+          toast.error("Payment failed. Please try again.");
         });
 
-        // Handle modal dismiss (user closed without paying)
-        const handleFocus = () => {
-          // When window regains focus, check if payment is still submitting
-          setTimeout(() => {
-            if (submitting) {
-              setSubmitting(false);
-            }
-          }, 100);
-        };
-
-        window.addEventListener('focus', handleFocus);
+        // Handle payment modal dismiss (user cancelled)
+        rzp.on("modal.dismiss", () => {
+          console.log("Razorpay modal dismissed by user");
+          setPaymentStatus("failed");
+          setSubmitting(false);
+          toast.error("Payment cancelled.");
+        });
 
         rzp.open();
 
-        // Clean up the event listener after some time
-        setTimeout(() => {
-          window.removeEventListener('focus', handleFocus);
-          // If still submitting after timeout, assume modal was closed
+        // Fallback: Reset processing state after 30 seconds if no handler triggered
+        const fallbackTimeout = setTimeout(() => {
           if (submitting) {
+            console.log("Fallback timeout triggered - resetting loading state");
             setSubmitting(false);
+            setPaymentStatus("failed");
+            toast.error("Payment process timed out. Please try again.");
           }
-        }, 30000); // 30 seconds timeout
+        }, 30000); // 30 seconds
+
+        // Clear fallback timeout when payment is handled
+        const clearFallback = () => clearTimeout(fallbackTimeout);
+
+        // Attach cleanup to all handlers
+        const originalSuccess = options.handler;
+        options.handler = (resp) => {
+          clearFallback();
+          originalSuccess(resp);
+        };
+
+        rzp.on("payment.failed", function (err?: RazorpayPaymentFailed) {
+          clearFallback();
+          console.error("Razorpay failure:", err);
+          setPaymentStatus("failed");
+          setSubmitting(false);
+          toast.error("Payment failed. Please try again.");
+        });
+
+        rzp.on("modal.dismiss", () => {
+          clearFallback();
+          setPaymentStatus("failed");
+          setSubmitting(false);
+          toast.error("Payment cancelled.");
+        });
+
       } else {
         toast.error(json?.message || "Failed to create ticket");
         setSubmitting(false);
+        setPaymentStatus("failed");
       }
     } catch (err) {
       console.error(err);
-      toast.error("Network error while creating ticket");
+      setPaymentStatus("failed");
+      toast.error(err instanceof Error ? err.message : "Network error while creating ticket");
     } finally {
       setSubmitting(false);
+      // Clear timeout if it exists
+      if (typeof timeoutId !== 'undefined') {
+        clearTimeout(timeoutId);
+      }
     }
   };
 
@@ -334,7 +412,7 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center">
       <div className="absolute  inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-[95vw] max-w-[700px] rounded-2xl p-4 sm:p-8 md:p-10 mx-4 bg-[#082ca7] max-h-[90vh] overflow-y-auto">
+      <div className="relative w-[95vw] max-w-[700px] max-h-[90vh] overflow-y-auto rounded-2xl p-4 sm:p-8 md:p-10 mx-4 bg-[#082ca7]">
         <header className="flex flex-col items-center gap-2 mb-6 sm:mb-10">
           <h2 className="text-white text-2xl sm:text-3xl font-semibold text-center">Get Your Pass</h2>
           <p className="text-white/90 text-sm sm:text-base text-center">Fill in the details to secure your entry.</p>
@@ -343,7 +421,9 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
         <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 md:gap-10">
           <div className="flex flex-col">
             <input
-              className="rounded-xl bg-white/95 px-4 py-3 outline-none placeholder:text-gray-500"
+              className={`rounded-xl bg-white/95 px-4 py-3 outline-none placeholder:text-gray-500 ${
+                errors.name ? 'border-2 border-[#e5081f]' : ''
+              }`}
               placeholder="Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -352,7 +432,9 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
           </div>
           <div className="flex flex-col">
             <input
-              className="rounded-xl bg-white/95 px-4 py-3 outline-none placeholder:text-gray-500"
+              className={`rounded-xl bg-white/95 px-4 py-3 outline-none placeholder:text-gray-500 ${
+                errors.mobile ? 'border-2 border-[#e5081f]' : ''
+              }`}
               placeholder="Mobile Number"
               inputMode="numeric"
               value={mobile}
@@ -362,7 +444,9 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
           </div>
           <div className="flex flex-col">
             <input
-              className="rounded-xl bg-white/95 px-4 py-3 outline-none placeholder:text-gray-500"
+              className={`rounded-xl bg-white/95 px-4 py-3 outline-none placeholder:text-gray-500 ${
+                errors.email ? 'border-2 border-[#e5081f]' : ''
+              }`}
               placeholder="Mail ID"
               type="email"
               value={email}
@@ -372,7 +456,9 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
           </div>
           <div className="flex flex-col">
             <input
-              className="rounded-xl bg-white/95 px-4 py-3 outline-none placeholder:text-gray-500"
+              className={`rounded-xl bg-white/95 px-4 py-3 outline-none placeholder:text-gray-500 ${
+                errors.memberId ? 'border-2 border-[#e5081f]' : ''
+              }`}
               placeholder="Member ID"
               value={memberId}
               onChange={(e) => setMemberId(e.target.value)}
@@ -381,7 +467,9 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
           </div>
           <div className="flex flex-col">
             <input
-              className="rounded-xl bg-white/95 px-4 py-3 outline-none placeholder:text-gray-500"
+              className={`rounded-xl bg-white/95 px-4 py-3 outline-none placeholder:text-gray-500 ${
+                errors.passPurchase ? 'border-2 border-[#e5081f]' : ''
+              }`}
               placeholder="Number of Passes"
               type="number"
               min="1"
@@ -392,7 +480,9 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
           </div>
           <div className="flex flex-col">
             <select
-              className="rounded-xl bg-white/95 px-4 py-3 outline-none text-gray-700"
+              className={`rounded-xl bg-white/95 px-4 py-3 outline-none text-gray-700 ${
+                errors.passType ? 'border-2 border-[#e5081f]' : ''
+              }`}
               value={passType}
               onChange={(e) => setPassType(e.target.value)}
             >
@@ -404,7 +494,9 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
           </div>
           <div className="flex flex-col">
             <select
-              className="rounded-xl bg-white/95 px-4 py-3 outline-none text-gray-700"
+              className={`rounded-xl bg-white/95 px-4 py-3 outline-none text-gray-700 ${
+                errors.memberType ? 'border-2 border-[#e5081f]' : ''
+              }`}
               value={memberType}
               onChange={(e) => setMemberType(e.target.value)}
             >
@@ -417,7 +509,9 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
           </div>
           <div className="flex flex-col">
             <select
-              className="rounded-xl bg-white/95 px-4 py-3 outline-none text-gray-700"
+              className={`rounded-xl bg-white/95 px-4 py-3 outline-none text-gray-700 ${
+                errors.paymentMode ? 'border-2 border-[#e5081f]' : ''
+              }`}
               value={paymentMode}
               onChange={(e) => setPaymentMode(e.target.value)}
             >
@@ -448,9 +542,13 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
           <div className="sm:col-span-2 flex justify-center mt-2">
             <button
               type="submit"
-              className="w-full sm:min-w-[11.25rem] rounded-xl px-6 py-3 text-white font-medium bg-[#ffbd00] hover:bg-[#e6a800] transition"
+              disabled={submitting}
+              className="w-full sm:min-w-[11.25rem] rounded-xl px-6 py-3 text-white font-medium bg-[#FF7A00] hover:bg-[#e66a00] transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {submitting ? "Submitting..." : "Submit"}
+              {paymentStatus === "processing" ? "Processing Payment..." :
+               paymentStatus === "success" ? "Payment Successful!" :
+               paymentStatus === "failed" ? "Payment Failed" :
+               submitting ? "Preparing Payment..." : "Submit"}
             </button>
           </div>
         </form>
@@ -468,5 +566,3 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
 };
 
 export default BuyPassModal;
-
-
