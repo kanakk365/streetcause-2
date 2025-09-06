@@ -100,7 +100,30 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
   }, [initialPassType, isOpen]);
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) {
+      // Reset all form data and states when modal closes
+      setName("");
+      setMobile("");
+      setEmail("");
+      setMemberId("");
+      setPassPurchase("");
+      setPassType("Pass Type");
+      setMemberType("Member Type");
+      setPaymentMode("Payment Mode");
+      setTouched(false);
+      setSubmitting(false);
+      setErrors({
+        name: "",
+        mobile: "",
+        email: "",
+        memberId: "",
+        passPurchase: "",
+        passType: "",
+        memberType: "",
+        paymentMode: ""
+      });
+      return;
+    }
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
@@ -256,6 +279,10 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
           handler: async (resp: RazorpayPaymentSuccess) => {
             // Optionally send to verify endpoint here
             console.log("Razorpay success:", resp);
+
+            // Reset submitting state
+            setSubmitting(false);
+
             onSuccess?.(ticket);
             onClose();
           },
@@ -265,10 +292,34 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
         rzp.on("payment.failed", function (err: RazorpayPaymentFailed) {
           console.error("Razorpay failure:", err);
           toast.error("Payment failed. Please try again.");
+          setSubmitting(false);
         });
+
+        // Handle modal dismiss (user closed without paying)
+        const handleFocus = () => {
+          // When window regains focus, check if payment is still submitting
+          setTimeout(() => {
+            if (submitting) {
+              setSubmitting(false);
+            }
+          }, 100);
+        };
+
+        window.addEventListener('focus', handleFocus);
+
         rzp.open();
+
+        // Clean up the event listener after some time
+        setTimeout(() => {
+          window.removeEventListener('focus', handleFocus);
+          // If still submitting after timeout, assume modal was closed
+          if (submitting) {
+            setSubmitting(false);
+          }
+        }, 30000); // 30 seconds timeout
       } else {
         toast.error(json?.message || "Failed to create ticket");
+        setSubmitting(false);
       }
     } catch (err) {
       console.error(err);

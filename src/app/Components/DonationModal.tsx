@@ -95,9 +95,28 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
 
   useEffect(() => {
     if (!isOpen) {
-      // Reset states when modal closes
+      // Reset all form data and states when modal closes
+      setName("");
+      setMobile("");
+      setEmail("");
+      setAmount("");
+      setMemberId("");
+      setMemberType("Member Type");
+      setPaymentMode("Payment Mode");
+      setTouched(false);
+      setIsLoading(false);
       setTicketData(null);
       setShowTicketModal(false);
+      setErrors({
+        name: "",
+        mobile: "",
+        email: "",
+        memberId: "",
+        memberType: "",
+        amount: "",
+        idType: "",
+        paymentMode: ""
+      });
       return;
     }
     const handler = (e: KeyboardEvent) => {
@@ -268,6 +287,9 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
 
             console.log("Formatted ticket data:", formattedTicketData);
 
+            // Reset loading state
+            setIsLoading(false);
+
             // Show success message
             toast.success(`Payment successful! ₹${amountNumber} donation received. Here is your receipt.`);
 
@@ -283,15 +305,33 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
           toast.error("Payment failed. Please try again.");
           setIsLoading(false);
         });
-        rzp.open();
 
         // Handle modal dismiss (user closed without paying)
-        rzp.on("payment.failed", () => {
-          setIsLoading(false);
-        });
+        const handleFocus = () => {
+          // When window regains focus, check if payment is still loading
+          setTimeout(() => {
+            if (isLoading) {
+              setIsLoading(false);
+            }
+          }, 100);
+        };
+
+        window.addEventListener('focus', handleFocus);
+
+        rzp.open();
+
+        // Clean up the event listener after some time
+        setTimeout(() => {
+          window.removeEventListener('focus', handleFocus);
+          // If still loading after timeout, assume modal was closed
+          if (isLoading) {
+            setIsLoading(false);
+          }
+        }, 30000); // 30 seconds timeout
 
       } else {
         toast.error('Failed to create donation. Please try again.');
+        setIsLoading(false);
       }
     } catch (error) {
       console.error('Donation submission failed:', error);
