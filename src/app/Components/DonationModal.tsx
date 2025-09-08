@@ -240,7 +240,7 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
         email,
         donationAmount: amountNumber,
         memberId: memberId.trim(),
-        memberType: "L2",
+        memberType: memberType,
         paymentMode
       };
 
