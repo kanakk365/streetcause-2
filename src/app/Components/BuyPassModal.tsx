@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { RefreshReminderPopup } from "./RefreshReminderPopup";
 
 // Minimal Razorpay typings for Checkout.js
 declare global {
@@ -81,6 +82,7 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
   const [touched, setTouched] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState<"idle" | "processing" | "success" | "failed">("idle");
+  const [showRefreshPopup, setShowRefreshPopup] = useState(false);
 
   // Field error states
   const [errors, setErrors] = useState({
@@ -103,9 +105,12 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
   useEffect(() => {
     if (isOpen) {
       setPaymentStatus("idle");
+      // Show refresh popup when modal opens
+      setShowRefreshPopup(true);
     } else {
       // Clear form when modal closes
       clearForm();
+      setShowRefreshPopup(false);
     }
   }, [isOpen]);
 
@@ -410,7 +415,12 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[1000] flex items-center justify-center">
+    <>
+      <RefreshReminderPopup 
+        isOpen={showRefreshPopup} 
+        onClose={() => setShowRefreshPopup(false)} 
+      />
+      <div className="fixed inset-0 z-[1000] flex items-center justify-center">
       <div className="absolute  inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
       <div className="relative w-[95vw] max-w-[700px] max-h-[90vh] overflow-y-auto rounded-2xl p-4 sm:p-8 md:p-10 mx-4 bg-[#082ca7]">
         <header className="flex flex-col items-center gap-2 mb-6 sm:mb-10">
@@ -562,6 +572,7 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
         </button>
       </div>
     </div>
+    </>
   );
 };
 

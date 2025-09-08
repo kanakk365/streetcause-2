@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import TicketModal from "./TicketModal";
+import { RefreshReminderPopup } from "./RefreshReminderPopup";
 
 // Razorpay types
 declare global {
@@ -79,6 +80,7 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
   const [paymentStatus, setPaymentStatus] = useState<"idle" | "processing" | "success" | "failed">("idle");
   const [ticketData, setTicketData] = useState<TicketData | null>(null);
   const [showTicketModal, setShowTicketModal] = useState(false);
+  const [showRefreshPopup, setShowRefreshPopup] = useState(false);
 
   // Field error states
   const [errors, setErrors] = useState({
@@ -98,10 +100,13 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
     if (!isOpen) {
       // Clear form when modal closes
       clearForm();
+      setShowRefreshPopup(false);
       return;
     }
     // Reset payment status when modal opens
     setPaymentStatus("idle");
+    // Show refresh popup when modal opens
+    setShowRefreshPopup(true);
   }, [isOpen]);
 
   useEffect(() => {
@@ -407,7 +412,12 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[1000] flex items-center justify-center">
+    <>
+      <RefreshReminderPopup 
+        isOpen={showRefreshPopup} 
+        onClose={() => setShowRefreshPopup(false)} 
+      />
+      <div className="fixed inset-0 z-[1000] flex items-center justify-center">
       <div className="absolute  inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
       <div className="relative w-[95vw] max-w-[700px] max-h-[90vh] overflow-y-auto rounded-2xl p-4 sm:p-8 md:p-10 mx-4 bg-[#082ca7]">
         <header className="flex flex-col items-center gap-2 mb-6 sm:mb-10">
@@ -562,6 +572,7 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
         />
       )}
     </div>
+    </>
   );
 };
 
