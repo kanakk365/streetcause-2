@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import TicketModal from "./TicketModal";
-import { RefreshReminderPopup } from "./RefreshReminderPopup";
+import RefreshReminderPopup from "./RefreshReminderPopup";
 
 // Razorpay types
 declare global {
@@ -44,6 +44,7 @@ type RazorpayOptions = {
   notes?: Record<string, string>;
   theme?: { color?: string };
   handler: (response: RazorpayPaymentSuccess) => void;
+  modal?: { ondismiss?: () => void };
 };
 
 type RazorpayInstance = {
@@ -80,7 +81,7 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
   const [paymentStatus, setPaymentStatus] = useState<"idle" | "processing" | "success" | "failed">("idle");
   const [ticketData, setTicketData] = useState<TicketData | null>(null);
   const [showTicketModal, setShowTicketModal] = useState(false);
-  const [showRefreshPopup, setShowRefreshPopup] = useState(false);
+  const [showReminderPopup, setShowReminderPopup] = useState(false);
 
   // Field error states
   const [errors, setErrors] = useState({
@@ -100,13 +101,12 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
     if (!isOpen) {
       // Clear form when modal closes
       clearForm();
-      setShowRefreshPopup(false);
+      setShowReminderPopup(false); // Hide popup when modal closes
       return;
     }
     // Reset payment status when modal opens
     setPaymentStatus("idle");
-    // Show refresh popup when modal opens
-    setShowRefreshPopup(true);
+    setShowReminderPopup(true); // Show popup when modal opens
   }, [isOpen]);
 
   useEffect(() => {
@@ -146,6 +146,7 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
     setPaymentStatus("idle");
     setTicketData(null);
     setShowTicketModal(false);
+    setShowReminderPopup(false);
     setErrors({
       name: "",
       mobile: "",
@@ -156,6 +157,11 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
       idType: "",
       paymentMode: ""
     });
+  };
+
+  // Handle popup dismissal
+  const handlePopupDismiss = () => {
+    setShowReminderPopup(false);
   };
 
   // Validate individual fields
@@ -238,15 +244,36 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
     setIsLoading(true);
     setPaymentStatus("processing");
     try {
-      // Step 1: Create donation record on backend
+      // Step 1: Create Razorpay order via checkout endpoint
+      const cRes = await fetch("https://scpapi.elitceler.com/api/v1/payments/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: name.trim(),
+          amount: amountNumber,
+          meta: { context: "donation" }
+        })
+      });
+      if (!cRes.ok) throw new Error("Failed to create order");
+      const cJson = await cRes.json();
+      const order = cJson.order || cJson.paymentUrl;
+      const orderId = order?.id;
+      const amount = order?.amount;
+      const currency = order?.currency || "INR";
+      const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+
+      if (!orderId) throw new Error("Order ID not received");
+
+      // Step 2: Create donation record on backend with razorpayOrderId
       const donationData = {
-        name,
-        mobileNumber: mobile,
-        email,
+        name: name.trim(),
+        mobileNumber: mobile.trim(),
+        email: email.trim(),
         donationAmount: amountNumber,
         memberId: memberId.trim(),
         memberType: memberType,
-        paymentMode
+        paymentMode,
+        razorpayOrderId: orderId
       };
 
       const response = await fetch('https://scpapi.elitceler.com/api/v1/d2/donations', {
@@ -259,35 +286,12 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
 
       const result = await response.json();
 
-      // Handle API errors (non-2xx status codes)
       if (!response.ok) {
         throw new Error(result?.message || `HTTP ${response.status}: ${response.statusText}`);
       }
 
       if (result.success && result.data) {
         const donation = result.data;
-
-        // Step 2: Create Razorpay order via checkout endpoint
-        // Send rupees to backend, let backend handle paise conversion
-        const cRes = await fetch("https://scpapi.elitceler.com/api/v1/payments/checkout", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: donation.name,
-            amount: amountNumber,
-            meta: { donationId: donation.donorId, donationDbId: donation.id }
-          })
-        });
-
-        if (!cRes.ok) throw new Error("Failed to create order");
-        const cJson = await cRes.json();
-
-        // Extract order details from the nested response structure
-        const order = cJson.order || cJson.paymentUrl;
-        const orderId = order?.id;
-        const amount = order?.amount;
-        const currency = order?.currency || "INR";
-        const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
 
         // Step 3: Open Razorpay Checkout
         const options: RazorpayOptions = {
@@ -309,54 +313,116 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
             memberType: donationData.memberType,
           },
           theme: { color: "#082ca7" },
-          handler: async (resp: RazorpayPaymentSuccess) => {
-            // Payment successful, show ticket
-            console.log("Razorpay success:", resp);
-            console.log("Donation data:", donation);
-            setPaymentStatus("success");
+          handler: async (response: RazorpayPaymentSuccess) => {
+            try {
+              // Step 4: Verify payment with backend
+              const verifyResponse = await fetch(
+                "https://scpapi.elitceler.com/api/v1/payments/verification",
+                {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    razorpay_payment_id: response.razorpay_payment_id,
+                    razorpay_order_id: response.razorpay_order_id,
+                    razorpay_signature: response.razorpay_signature,
+                  }),
+                }
+              );
 
-            const formattedTicketData: TicketData = {
-              passPurchaseName: donation.name,
-              passType: "Donation", // Since this is a donation, not a pass
-              passId: donation.donorId,
-              mobileNumber: donation.mobileNumber,
-              email: donation.email,
-              memberType: donation.memberType,
-              paymentMode: donation.paymentMode,
-              qrCode: donation.qrCode,
-            };
+              if (!verifyResponse.ok) {
+                throw new Error("Verification failed");
+              }
 
-            console.log("Formatted ticket data:", formattedTicketData);
-
-            // Show success message
-            toast.success(`Payment successful! ₹${amountNumber} donation received. Here is your receipt.`);
-
-            setIsLoading(false);
-            setTicketData(formattedTicketData);
-            setShowTicketModal(true);
-            console.log("Ticket modal should now be visible");
+              const verifyData = await verifyResponse.json();
+              if (verifyData.success) {
+                setPaymentStatus("success");
+                const formattedTicketData: TicketData = {
+                  passPurchaseName: donation.name,
+                  passType: "Donation",
+                  passId: donation.donorId,
+                  mobileNumber: donation.mobileNumber,
+                  email: donation.email,
+                  memberType: donation.memberType,
+                  paymentMode: donation.paymentMode,
+                  qrCode: donation.qrCode,
+                };
+                toast.success(`Payment successful! ₹${amountNumber} donation received. Here is your receipt.`);
+                setIsLoading(false);
+                setTicketData(formattedTicketData);
+                setShowTicketModal(true);
+              } else {
+                throw new Error(verifyData.message || "Verification failed");
+              }
+            } catch (e) {
+              console.error(e);
+              setPaymentStatus("failed");
+              setIsLoading(false);
+              toast.error("Payment verification failed. Please contact support with your order ID.");
+            }
           },
+          modal: {
+            ondismiss: async () => {
+              // Poll verification briefly in case payment completed right before close
+              const attempts = 1;
+              const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+              let verified = false;
+              for (let i = 0; i < attempts; i++) {
+                try {
+                  const resp = await fetch("https://scpapi.elitceler.com/api/v1/payments/verification", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ razorpay_order_id: orderId }),
+                  });
+                  if (resp.ok) { verified = true; break; }
+                } catch {}
+                await wait(2000);
+              }
+              if (verified) {
+                setPaymentStatus("success");
+                const formattedTicketData: TicketData = {
+                  passPurchaseName: donation.name,
+                  passType: "Donation",
+                  passId: donation.donorId,
+                  mobileNumber: donation.mobileNumber,
+                  email: donation.email,
+                  memberType: donation.memberType,
+                  paymentMode: donation.paymentMode,
+                  qrCode: donation.qrCode,
+                };
+                toast.success(`Payment successful! ₹${amountNumber} donation received. Here is your receipt.`);
+                setIsLoading(false);
+                setTicketData(formattedTicketData);
+                setShowTicketModal(true);
+              } else {
+                setPaymentStatus("failed");
+                setIsLoading(false);
+                toast.error("Payment cancelled.");
+              }
+            }
+          }
         };
 
         const rzp = new window.Razorpay(options);
-        rzp.on("payment.failed", function (err?: RazorpayPaymentFailed) {
+        rzp.on("payment.failed", async function (err?: RazorpayPaymentFailed) {
           console.error("Razorpay failure:", err);
+          try {
+            await fetch("https://scpapi.elitceler.com/api/v1/payments/verification", {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ razorpay_order_id: orderId }),
+            });
+          } catch (e) {
+            console.error("Verification call on failure errored:", e);
+          }
           setPaymentStatus("failed");
           toast.error("Payment failed. Please try again.");
           setIsLoading(false);
         });
 
-        // Handle payment modal dismiss (user cancelled)
-        rzp.on("modal.dismiss", () => {
-          console.log("Razorpay modal dismissed by user");
-          setPaymentStatus("failed");
-          setIsLoading(false);
-          toast.error("Payment cancelled.");
-        });
+        // Remove old event-based modal.dismiss; handled via options.modal.ondismiss
 
         rzp.open();
 
-        // Fallback: Reset processing state after 30 seconds if no handler triggered
         const fallbackTimeout = setTimeout(() => {
           if (isLoading) {
             console.log("Fallback timeout triggered - resetting loading state");
@@ -364,33 +430,34 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
             setPaymentStatus("failed");
             toast.error("Payment process timed out. Please try again.");
           }
-        }, 30000); // 30 seconds
+        }, 30000);
 
-        // Clear fallback timeout when payment is handled
         const clearFallback = () => clearTimeout(fallbackTimeout);
 
-        // Attach cleanup to all handlers
         const originalSuccess = options.handler;
         options.handler = (resp) => {
           clearFallback();
           originalSuccess(resp);
         };
 
-        rzp.on("payment.failed", function (err?: RazorpayPaymentFailed) {
+        rzp.on("payment.failed", async function (err?: RazorpayPaymentFailed) {
           clearFallback();
           console.error("Razorpay failure:", err);
+          try {
+            await fetch("https://scpapi.elitceler.com/api/v1/payments/verification", {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ razorpay_order_id: orderId }),
+            });
+          } catch (e) {
+            console.error("Verification call on failure errored:", e);
+          }
           setPaymentStatus("failed");
           toast.error("Payment failed. Please try again.");
           setIsLoading(false);
         });
 
-        rzp.on("modal.dismiss", () => {
-          clearFallback();
-          setPaymentStatus("failed");
-          toast.error("Payment cancelled.");
-          setIsLoading(false);
-        });
-
+        // Remove old event-based modal.dismiss; handled via options.modal.ondismiss
       } else {
         toast.error('Failed to create donation. Please try again.');
         setIsLoading(false);
@@ -413,9 +480,10 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
 
   return (
     <>
-      <RefreshReminderPopup 
-        isOpen={showRefreshPopup} 
-        onClose={() => setShowRefreshPopup(false)} 
+      {/* Refresh Reminder Popup */}
+      <RefreshReminderPopup
+        isOpen={showReminderPopup}
+        onClose={handlePopupDismiss}
       />
       <div className="fixed inset-0 z-[1000] flex items-center justify-center">
       <div className="absolute  inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
