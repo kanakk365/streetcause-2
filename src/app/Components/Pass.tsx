@@ -34,14 +34,8 @@ export const PassSection: React.FC = () => {
     {
       title: "Dandiya Dhoom (General)",
       description: "Entry for one, Regular Access",
-      price: "₹309",
+      price: "₹409",
       image: "/images/pass1.png"
-    },
-    {
-      title: "Garba Gold (VIP)",
-      description: "Entry for one, Front Row Access",
-      price: "₹999",
-      image: "/images/pass2.png"
     }
   ];
 

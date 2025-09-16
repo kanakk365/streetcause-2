@@ -210,9 +210,9 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
   // Calculate total amount based on pass type and quantity
   const totalAmount = useMemo(() => {
     if (passCount <= 0) return 0;
-    const baseAmount = /vip/i.test(passType) ? 999 : 309;
+    const baseAmount = 409;
     return baseAmount * passCount;
-  }, [passType, passCount]);
+  }, [passCount]);
 
   const isValid = useMemo(() => {
     const mobileOk = /^\d{10}$/.test(mobile.trim());
@@ -262,10 +262,10 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
     try {
       setSubmitting(true);
       setPaymentStatus("processing");
-      const normalizedPassType = /vip/i.test(passType) ? "VIP" : "Normal";
+      const normalizedPassType = "Normal";
 
       // Step 1: Create Razorpay order via checkout endpoint (send rupees)
-      const amountRupees = /vip/i.test(passType) ? 999 : 309;
+      const amountRupees = 409;
       const totalAmountRupees = amountRupees * passCount;
       const cRes = await fetch("https://scpapi.elitceler.com/api/v1/payments/checkout", {
         method: "POST",
@@ -376,7 +376,7 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
           modal: {
             ondismiss: async () => {
               // Poll verification briefly in case payment completed right before close
-              const attempts = 5;
+              const attempts = 2;
               const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
               let verified = false;
               for (let i = 0; i < attempts; i++) {
@@ -569,7 +569,6 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
             >
               <option>Pass Type</option>
               <option>Dandiya Dhoom (General)</option>
-              <option>Garba Gold (VIP)</option>
             </select>
             {errors.passType && <span className="text-[#e5081f] text-sm mt-1">{errors.passType}</span>}
           </div>
@@ -613,7 +612,7 @@ export const BuyPassModal: React.FC<BuyPassModalProps> = ({ isOpen, onClose, ini
                 <p className="text-white text-2xl font-bold">₹{totalAmount}</p>
                 {passCount > 1 && (
                   <p className="text-white/80 text-sm mt-1">
-                    {passCount} passes × ₹{/vip/i.test(passType) ? 999 : 309}
+                    {passCount} passes × ₹409
                   </p>
                 )}
               </div>
